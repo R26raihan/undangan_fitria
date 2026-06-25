@@ -1,0 +1,51 @@
+/* Local font: Great Vibes (downloaded for reliability) */
+@font-face {
+  font-family: 'Great Vibes';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/GreatVibes-Regular.woff2') format('woff2');
+}
+
+:root {
+  /* Elegant Dusty Blue & Slate Grey Wedding Color Palette */
+  --color-primary: #2B4C59;      /* Deep Slate Blue / Keabuan Kebiruan */
+  --color-secondary: #8EA7B5;    /* Dusty Blue Accent */
+  --color-secondary-light: #D9E4EC; /* Light Blue-Grey Accent */
+  --color-bg-light: #F0F4F8;     /* Soft Warm Blue-Grey / Creamy White-Blue */
+  --color-bg-white: #FFFFFF;
+  --color-text-dark: #1D2D35;    /* Very Dark Slate */
+  --color-text-muted: #687D87;   /* Muted Slate Grey */
+  --color-card-bg: rgba(255, 255, 255, 0.9);
+
+  --font-serif: 'Cormorant Garamond', serif;
+  --font-script: 'Great Vibes', cursive;
+  --font-sans: 'Montserrat', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  color: var(--color-text-dark);
+  background: #e2e8f0; /* Fallback desktop background */
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure background of the app wrapper behaves nicely */
+#app {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+

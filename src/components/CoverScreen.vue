@@ -39,12 +39,21 @@ const showVideo = ref(false)
 const videoPlayer = ref<HTMLVideoElement | null>(null)
 
 const handleOpen = () => {
-  showVideo.value = true
-  if (videoPlayer.value) {
-    videoPlayer.value.play().catch((err) => {
-      console.warn("Video play failed:", err)
-    })
-  }
+  // First, close the gates and fade out the welcome screen contents
+  gatesOpen.value = false
+  showWelcome.value = false
+
+  // Wait for the closing animation to finish (1.5s) before playing the video
+  setTimeout(() => {
+    showVideo.value = true
+    setTimeout(() => {
+      if (videoPlayer.value) {
+        videoPlayer.value.play().catch((err) => {
+          console.warn("Video play failed:", err)
+        })
+      }
+    }, 100)
+  }, 1500)
 }
 
 const handleVideoEnded = () => {
@@ -97,9 +106,9 @@ const handleVideoEnded = () => {
       <p class="greeting-subtitle">WEDDING INVITATION</p>
       
       <div class="couple-names">
-        <h1 class="bride" :class="{ 'writing': showWelcome }">Fitriani</h1>
+        <h1 class="bride" :class="{ 'writing': showWelcome }">Fitria</h1>
         <span class="ampersand" :class="{ 'writing': showWelcome }">&</span>
-        <h1 class="groom" :class="{ 'writing': showWelcome }">Aswan</h1>
+        <h1 class="groom" :class="{ 'writing': showWelcome }">Andi Aswan Hidayat</h1>
       </div>
 
       <!-- <div class="divider">

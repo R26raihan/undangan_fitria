@@ -14,17 +14,17 @@ interface Petal {
 const petals = ref<Petal[]>([])
 
 onMounted(() => {
-  // Generate 20 petals with randomized properties
-  const count = 20
+  // Reduced to 12 petals for performance
+  const count = 12
   for (let i = 0; i < count; i++) {
     petals.value.push({
       id: i,
       left: `${Math.random() * 100}%`,
       delay: `${Math.random() * 8}s`,
-      duration: `${10 + Math.random() * 15}s`, // Slow, gentle fall
-      size: `${10 + Math.random() * 15}px`,
-      opacity: 0.3 + Math.random() * 0.5,
-      type: Math.floor(Math.random() * 3) // 3 different petal shapes
+      duration: `${12 + Math.random() * 10}s`,
+      size: `${10 + Math.random() * 12}px`,
+      opacity: 0.3 + Math.random() * 0.4,
+      type: Math.floor(Math.random() * 3)
     })
   }
 })
@@ -75,9 +75,10 @@ onMounted(() => {
 
 .petal {
   position: absolute;
-  top: -10%;
+  top: 0;
   display: block;
   pointer-events: none;
+  will-change: transform;
   animation-name: fall;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
@@ -90,15 +91,13 @@ onMounted(() => {
 
 @keyframes fall {
   0% {
-    top: -10%;
-    transform: translateX(0) rotate(0deg);
+    transform: translateY(-10vh) translateX(0) rotate(0deg);
   }
   50% {
-    transform: translateX(80px) rotate(180deg);
+    transform: translateY(55vh) translateX(60px) rotate(180deg);
   }
   100% {
-    top: 110%;
-    transform: translateX(-20px) rotate(360deg);
+    transform: translateY(110vh) translateX(-20px) rotate(360deg);
   }
 }
 </style>

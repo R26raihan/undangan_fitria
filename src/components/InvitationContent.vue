@@ -4,10 +4,20 @@ import bungakiri from '../assets/bungakiri.png'
 import bungakanan from '../assets/bungakanan.png'
 import bgKiriTree from '../assets/pohonsisikiri.png'
 import bgKananTree from '../assets/pohonsisikanan.png'
+import gallery1 from '../assets/IMG_9133.JPG'
+import gallery2 from '../assets/IMG_9134.JPG'
+import gallery3 from '../assets/IMG_9135.JPG'
+import gallery4 from '../assets/IMG_9136.JPG'
+import gallery5 from '../assets/IMG_9204.JPG'
+import bgKiri from '../assets/Biru Emas dan Merah Muda Halus Undangan Pernikahan.png'
+import bgKanan from '../assets/Biru Emas dan Merah Muda Halus Undangan Pernikahan (2).png'
+import bgTiga from '../assets/Biru Emas dan Merah Muda Halus Undangan Pernikahan (3).png'
+import bgEmpat from '../assets/Biru Emas dan Merah Muda Halus Undangan Pernikahan (4).png'
+
+const contentGatesOpen = ref(false)
 
 // Countdown Timer logic
-const weddingDate = new Date()
-weddingDate.setDate(weddingDate.getDate() + 90) // 90 days from now
+const weddingDate = new Date('2026-08-15T00:00:00')
 
 const days = ref(0)
 const hours = ref(0)
@@ -97,6 +107,11 @@ onMounted(() => {
   timerInterval = setInterval(calculateTimeLeft, 1000)
   loadWishes()
 
+  // Trigger gate opening transition
+  setTimeout(() => {
+    contentGatesOpen.value = true
+  }, 100)
+
   sectionObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
@@ -112,6 +127,20 @@ onMounted(() => {
   document.querySelectorAll('.section').forEach((sec) => {
     sectionObserver?.observe(sec)
   })
+
+  // Gallery items: animate in on scroll
+  const galleryObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view')
+        galleryObserver.unobserve(entry.target) // animate once
+      }
+    })
+  }, { threshold: 0.15 })
+
+  document.querySelectorAll('.gallery-item, .gallery-cursive-title, .gallery-title-underline').forEach((el) => {
+    galleryObserver.observe(el)
+  })
 })
 
 onUnmounted(() => {
@@ -122,6 +151,22 @@ onUnmounted(() => {
 
 <template>
   <div class="invitation-container">
+    <!-- Transition Gate Panels that open on entry -->
+    <div class="content-floral-gates" :class="{ 'gates-open': contentGatesOpen }">
+      <div class="gate-panel left-panel">
+        <img :src="bgKiri" class="gate-middle-decor left-middle-decor" alt="" />
+        <img :src="bgEmpat" class="gate-side-decor left-side-decor" alt="" />
+        <img :src="bungakiri" class="gate-image gate-top left-gate-img" alt="" />
+        <img :src="bungakiri" class="gate-image gate-bottom left-gate-img" alt="" />
+      </div>
+      <div class="gate-panel right-panel">
+        <img :src="bgKanan" class="gate-middle-decor right-middle-decor" alt="" />
+        <img :src="bgTiga" class="gate-side-decor right-side-decor" alt="" />
+        <img :src="bungakanan" class="gate-image gate-top right-gate-img" alt="" />
+        <img :src="bungakanan" class="gate-image gate-bottom right-gate-img" alt="" />
+      </div>
+    </div>
+
     <!-- Fixed background decoration frame -->
     <div class="fixed-decorations">
       <img :src="bgKiriTree" class="fixed-tree left-tree" alt="" />
@@ -171,8 +216,8 @@ onUnmounted(() => {
       <div class="floral-frame"></div>
       <div class="hero-content">
         <p class="section-subtitle">THE WEDDING OF</p>
-        <h1 class="couple-title">Fitriani & Aswan</h1>
-        <p class="wedding-date-text">Minggu, 12 Oktober 2026</p>
+        <h1 class="couple-title">Fitria & Andi Aswan Hidayat</h1>
+        <p class="wedding-date-text">Sabtu, 15 Agustus 2026</p>
         
         <!-- Countdown Timer -->
         <div class="countdown-container">
@@ -198,31 +243,41 @@ onUnmounted(() => {
 
     <!-- Mempelai Section -->
     <section class="section mempelai-section">
-      <div class="section-header">
-        <h2 class="section-title">Mempelai</h2>
-        <p class="section-description">
-          Maha Suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan. Ya Allah, perkenankanlah kami menikahkan putra-putri kami:
-        </p>
-      </div>
+      <div class="mempelai-dome-frame">
+        <!-- Precise SVG Dome Background (100% Symmetrical) -->
+        <svg class="dome-svg-bg" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 0,100 L 0,35 C 0,22 12,18 22,14 C 36,10 46,3 50,0 C 54,3 64,10 78,14 C 88,18 100,22 100,35 L 100,100 Z" fill="rgba(255,255,255,0.06)" stroke="rgba(229, 193, 88, 0.7)" stroke-width="0.8" />
+          <path d="M 2.5,97.5 L 2.5,36 C 2.5,24 13.5,20.5 23,16.5 C 36.5,12.5 46,5.5 50,2.5 C 54,5.5 63.5,12.5 77,16.5 C 86.5,20.5 97.5,24 97.5,36 L 97.5,97.5" fill="none" stroke="rgba(229,193,88,0.4)" stroke-width="0.5" stroke-dasharray="2,2" />
+        </svg>
 
-      <!-- Bride Card -->
-      <div class="mempelai-card">
-        <div class="avatar-wrapper">
-          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=60" alt="Dian" class="mempelai-img" />
+        <div class="section-header" style="margin-bottom: 1rem; position: relative; z-index: 2;">
+          <h2 class="section-title">Mempelai</h2>
+          <p class="section-description">
+            Maha Suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan. Ya Allah, perkenankanlah kami menikahkan putra-putri kami:
+          </p>
         </div>
-        <h3 class="mempelai-name">Dian Rahmawati, S.Kom</h3>
-        <p class="parent-info">Putri pertama dari Bapak Ahmad Rosyidi & Ibu Siti Aminah</p>
-      </div>
 
-      <div class="mempelai-divider">&</div>
+        <div class="mempelai-row">
+          <!-- Bride Card -->
+          <div class="mempelai-card">
+            <div class="avatar-wrapper">
+              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=60" alt="Dian" class="mempelai-img" />
+            </div>
+            <h3 class="mempelai-name">Fitriani</h3>
+            <!-- <p class="parent-info">Putri pertama dari Bapak Ahmad Rosyidi & Ibu Siti Aminah</p> -->
+          </div>
 
-      <!-- Groom Card -->
-      <div class="mempelai-card">
-        <div class="avatar-wrapper">
-          <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&auto=format&fit=crop&q=60" alt="Syahdan" class="mempelai-img" />
+          <div class="mempelai-divider">&</div>
+
+          <!-- Groom Card -->
+          <div class="mempelai-card">
+            <div class="avatar-wrapper">
+              <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&auto=format&fit=crop&q=60" alt="Syahdan" class="mempelai-img" />
+            </div>
+            <h3 class="mempelai-name">Andi Aswan Hidayat</h3>
+            <!-- <p class="parent-info">Putra kedua dari Bapak Bambang Susilo & Ibu Herawati</p> -->
+          </div>
         </div>
-        <h3 class="mempelai-name">Syahdan Maulana, S.T</h3>
-        <p class="parent-info">Putra kedua dari Bapak Bambang Susilo & Ibu Herawati</p>
       </div>
     </section>
 
@@ -266,21 +321,30 @@ onUnmounted(() => {
     <!-- Gallery Section -->
     <section class="section gallery-section">
       <div class="section-header">
-        <h2 class="section-title">Galeri Foto</h2>
+        <h2 class="gallery-cursive-title">Our Moments</h2>
+        <div class="gallery-title-underline"></div>
       </div>
 
       <div class="gallery-grid">
         <div class="gallery-item item-1">
-          <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=400&auto=format&fit=crop&q=80" alt="Gallery 1" />
+          <img :src="gallery1" alt="Foto 1" />
+          <div class="gallery-overlay"></div>
         </div>
         <div class="gallery-item item-2">
-          <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=400&auto=format&fit=crop&q=80" alt="Gallery 2" />
+          <img :src="gallery2" alt="Foto 2" />
+          <div class="gallery-overlay"></div>
         </div>
         <div class="gallery-item item-3">
-          <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=400&auto=format&fit=crop&q=80" alt="Gallery 3" />
+          <img :src="gallery3" alt="Foto 3" />
+          <div class="gallery-overlay"></div>
         </div>
         <div class="gallery-item item-4">
-          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=80" alt="Gallery 4" />
+          <img :src="gallery4" alt="Foto 4" />
+          <div class="gallery-overlay"></div>
+        </div>
+        <div class="gallery-item item-5">
+          <img :src="gallery5" alt="Foto 5" />
+          <div class="gallery-overlay"></div>
         </div>
       </div>
     </section>
@@ -376,6 +440,7 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 @font-face {
   font-family: 'Great Vibes';
   font-style: normal;
@@ -813,29 +878,43 @@ onUnmounted(() => {
 }
 
 .countdown-item {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(173, 139, 58, 0.3);
-  backdrop-filter: blur(5px);
-  min-width: 65px;
-  padding: 0.8rem 0.5rem;
-  border-radius: 8px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 70px;
+  max-width: 90px;
+  padding: 0.75rem 0.5rem;
+  /* PENYESUAIAN WARNA: Background dibuat sedikit lebih gelap agar teks putih/emas kontras */
+  background: rgba(15, 23, 42, 0.45); 
+  /* Border emas tipis yang elegan */
+  border: 1px solid rgba(173, 139, 58, 0.4); 
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 8px;
+  box-sizing: border-box;
+  /* Efek bayangan halus agar kotak lebih "pop out" */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2); 
 }
 
 .countdown-item .number {
   font-family: var(--font-serif);
-  font-size: 1.4rem;
+  font-size: 1.5rem; /* Sedikit diperbesar agar dominan */
   font-weight: 700;
-  color: var(--color-primary);
+  /* PENYESUAIAN WARNA: Gunakan warna emas terang jika var(--color-primary) Anda terlalu gelap */
+  color: #e5c158; 
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Menambah keterbacaan angka */
+  line-height: 1;
 }
 
 .countdown-item .label {
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  margin-top: 0.2rem;
-  color: #c9d6cf;
+  margin-top: 0.4rem;
+  /* PENYESUAIAN WARNA: Putih semi-transparan agar tidak balapan dengan warna angka */
+  color: rgba(255, 255, 255, 0.7); 
 }
 
 /* Mempelai Section */
@@ -843,14 +922,49 @@ onUnmounted(() => {
   background: transparent;
 }
 
+/* Horizontal row container */
+.mempelai-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.mempelai-dome-frame {
+  position: relative;
+  width: 95%;
+  max-width: 375px;
+  margin: 1rem auto;
+  padding: 5.5rem 1.4rem 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.dome-svg-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  filter: drop-shadow(0px 8px 20px rgba(0, 0, 0, 0.15));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 0 0 20px 20px;
+}
+
 .avatar-wrapper {
-  width: 140px;
-  height: 140px;
+  width: 95px;
+  height: 95px;
   border-radius: 50%;
   overflow: hidden;
-  border: 3px solid var(--color-secondary);
-  margin: 0 auto 1.2rem;
-  box-shadow: 0 8px 20px rgba(18, 55, 42, 0.15);
+  border: 2.5px solid var(--color-secondary);
+  margin: 0 auto 0.8rem;
+  box-shadow: 0 6px 15px rgba(18, 55, 42, 0.15);
+  position: relative;
 }
 
 .mempelai-img {
@@ -861,30 +975,32 @@ onUnmounted(() => {
 
 .mempelai-card {
   text-align: center;
-  width: 100%;
-  max-width: 320px;
-  margin: 1rem auto;
+  flex: 1;
+  max-width: 140px;
 }
 
 .mempelai-name {
   font-family: var(--font-serif);
-  font-size: 1.35rem;
+  font-size: 0.9rem;
   color: var(--color-primary);
   font-weight: 700;
   margin-bottom: 0.4rem;
+  line-height: 1.3;
 }
 
 .parent-info {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--color-text-muted);
 }
 
 .mempelai-divider {
   font-family: var(--font-script);
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: normal;
   color: var(--color-secondary);
-  margin: 1.5rem 0;
+  flex-shrink: 0;
+  padding: 0 0.3rem;
+  align-self: center;
 }
 
 /* Event Section */
@@ -967,10 +1083,45 @@ onUnmounted(() => {
 }
 
 /* Gallery Section */
+
 .gallery-section {
   background: transparent;
 }
 
+/* Cursive animated title */
+.gallery-cursive-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: 3rem;
+  color: #e5c158;
+  text-shadow: 0 2px 12px rgba(229, 193, 88, 0.35);
+  margin: 0 0 0.3rem;
+  letter-spacing: 2px;
+  opacity: 0;
+  transform: translateY(-16px);
+  transition: opacity 1.2s ease, transform 1.2s ease;
+}
+
+.gallery-cursive-title.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.gallery-title-underline {
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #e5c158, transparent);
+  margin: 0 auto 1.5rem;
+  transition: width 1.4s ease 0.3s, opacity 1.4s ease 0.3s;
+  opacity: 0;
+  transform-origin: center;
+}
+
+.gallery-title-underline.in-view {
+  width: 80px;
+  opacity: 1;
+}
+
+/* Grid layout: 2 cols, last item spans full width */
 .gallery-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -980,22 +1131,57 @@ onUnmounted(() => {
 }
 
 .gallery-item {
-  border-radius: 8px;
+  position: relative;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border: 2px solid #fff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  border: 1.5px solid rgba(229, 193, 88, 0.4);
   aspect-ratio: 1;
+  /* hidden by default, animates in via .in-view */
+  opacity: 0;
+  transform: scale(0.92) translateY(22px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.gallery-item.in-view {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* Staggered transition delays */
+.gallery-item.item-1 { transition-delay: 0.05s; }
+.gallery-item.item-2 { transition-delay: 0.18s; }
+.gallery-item.item-3 { transition-delay: 0.31s; }
+.gallery-item.item-4 { transition-delay: 0.44s; }
+.gallery-item.item-5 {
+  transition-delay: 0.57s;
+  grid-column: 1 / -1;
+  aspect-ratio: 16/9;
 }
 
 .gallery-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: all 0.5s ease;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: block;
 }
 
-.gallery-item img:hover {
-  transform: scale(1.08);
+.gallery-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.35) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  border-radius: 12px;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.1);
+}
+
+.gallery-item:hover .gallery-overlay {
+  opacity: 1;
 }
 
 /* Gift Section */
@@ -1211,5 +1397,111 @@ onUnmounted(() => {
   font-size: 0.65rem;
   color: #8fa89b;
   margin-top: 2rem;
+}
+
+/* Transition Gate Panels Styling */
+.content-floral-gates {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.content-floral-gates .gate-panel {
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(180deg, #ffffff 0%, #f0f8ff 50%, #e6f2ff 100%);
+  display: flex;
+  align-items: center;
+  transition: transform 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+  position: relative;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.content-floral-gates .left-panel {
+  transform: translateX(0);
+  justify-content: flex-end;
+  border-right: 1px solid var(--color-secondary);
+}
+
+.content-floral-gates .right-panel {
+  transform: translateX(0);
+  justify-content: flex-start;
+  border-left: 1px solid var(--color-secondary);
+}
+
+.content-floral-gates.gates-open .left-panel {
+  transform: translateX(-100%);
+}
+
+.content-floral-gates.gates-open .right-panel {
+  transform: translateX(100%);
+}
+
+.content-floral-gates .gate-image {
+  position: absolute;
+  width: 150%;
+  height: auto;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.content-floral-gates .gate-bottom {
+  bottom: 0;
+}
+
+.content-floral-gates .gate-top {
+  top: 0;
+  transform: scaleY(-1);
+}
+
+.content-floral-gates .left-gate-img {
+  right: 0;
+}
+
+.content-floral-gates .right-gate-img {
+  left: 0;
+}
+
+.content-floral-gates .gate-middle-decor {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 140%;
+  height: auto;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.content-floral-gates .left-middle-decor {
+  left: -40px;
+}
+
+.content-floral-gates .right-middle-decor {
+  right: -40px;
+}
+
+.content-floral-gates .gate-side-decor {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.8;
+}
+
+.content-floral-gates .left-side-decor {
+  left: 0;
+}
+
+.content-floral-gates .right-side-decor {
+  right: 0;
 }
 </style>

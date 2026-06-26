@@ -55,7 +55,8 @@
 
 .cloud {
   position: absolute;
-  filter: blur(2px);
+  left: 0;
+  will-change: transform;
   animation-name: floatAway;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
@@ -88,15 +89,18 @@
 
 @keyframes floatAway {
   0% {
-    left: -150px;
-    transform: scale(0.9);
+    transform: translateX(-150px) scale(0.9);
+    opacity: 0;
   }
-  50% {
-    transform: scale(1.05) translateY(10px);
+  5% {
+    opacity: 1;
+  }
+  95% {
+    opacity: 1;
   }
   100% {
-    left: 110%;
-    transform: scale(0.9);
+    transform: translateX(110vw) scale(0.9);
+    opacity: 0;
   }
 }
 </style>

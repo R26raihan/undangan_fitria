@@ -8,9 +8,21 @@ const props = defineProps<{
 const emit = defineEmits(['toggle'])
 const audioRef = ref<HTMLAudioElement | null>(null)
 
-// A beautiful royalty-free romantic piano track
-const audioUrl = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3'
+// Import local music track
+import audioFile from '../assets/Alosi Ripolo Dua - Cover_spotdown.org.mp3'
+const audioUrl = audioFile
 
+// Play on mount if isPlaying is already true (triggered after user clicks "Buka Undangan")
+onMounted(() => {
+  if (props.isPlaying && audioRef.value) {
+    audioRef.value.play().catch(err => {
+      console.log('Audio autoplay prevented:', err)
+      emit('toggle', false)
+    })
+  }
+})
+
+// Handle subsequent play/pause toggles
 watch(() => props.isPlaying, (newVal) => {
   if (audioRef.value) {
     if (newVal) {

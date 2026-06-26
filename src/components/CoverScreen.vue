@@ -17,11 +17,20 @@ const gatesOpen = ref(false)
 const showWelcome = ref(false)
 
 onMounted(() => {
-  // Parse recipient name
-  const params = new URLSearchParams(window.location.search)
-  const to = params.get('to')
-  if (to) {
-    recipient.value = decodeURIComponent(to)
+  // Ambil nama tamu dari URL, format: ?Nama Tamu
+  // Contoh: https://fitriaaswan.netlify.app?Bapak Raihan dan Keluarga
+  const raw = window.location.search // e.g. "?Bapak%20Raihan%20dan%20Keluarga"
+  if (raw && raw.length > 1) {
+    const decoded = decodeURIComponent(raw.slice(1)) // hapus '?' di awal
+    if (decoded && !decoded.includes('=')) {
+      // Format baru: langsung nama tanpa key
+      recipient.value = decoded
+    } else {
+      // Fallback format lama: ?to=NamaTamu
+      const params = new URLSearchParams(raw)
+      const to = params.get('to')
+      if (to) recipient.value = decodeURIComponent(to)
+    }
   }
 
   // Gate Animation sequence

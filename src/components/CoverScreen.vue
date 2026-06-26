@@ -572,14 +572,15 @@ const handleVideoEnded = () => {
 }
 
 .guest-name {
-  font-family: 'Great Vibes', cursive;
-  font-size: 2rem;
-  font-weight: 400;
+  font-family: var(--font-sans);
+  font-size: 1.1rem;
+  font-weight: 600;
   color: var(--color-primary);
   margin-bottom: 0.5rem;
   word-wrap: break-word;
-  line-height: 1.3;
+  line-height: 1.5;
   padding: 0.1em 0;
+  letter-spacing: 0.3px;
 }
 
 .apology {

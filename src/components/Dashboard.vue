@@ -264,29 +264,39 @@ const shareToWhatsApp = () => {
 </template>
 
 <style scoped>
+/* Gunakan Font Google */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&display=swap');
+
 .dashboard-container {
   min-height: 100vh;
-  background-color: #F0F4F8;
-  color: #1D2D35;
-  padding: 2.5rem 1.5rem;
+  /* Samakan warna dasar gelap dengan background invitation */
+  background-color: #2B4C59;
+  background-image: radial-gradient(circle at 50% 50%, #3a6273 0%, #1e3640 100%);
+  color: #ffffff;
+  padding: 3rem 1.5rem;
   font-family: 'Montserrat', sans-serif;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
 }
 
 .dashboard-header {
   text-align: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .dashboard-header h1 {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 2.2rem;
-  color: #2B4C59;
+  font-size: 2.5rem;
+  color: #e5c158; /* Warna Emas */
   margin-bottom: 0.4rem;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .dashboard-subtitle {
-  color: #687D87;
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.95rem;
 }
 
@@ -294,27 +304,65 @@ const shareToWhatsApp = () => {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 3rem;
+  gap: 1.2rem;
   width: 100%;
+  max-width: 900px;
+}
+
+/* Dashboard Cards (Mengadopsi gaya kaca emas quran-card) */
+.stat-card,
+.generator-section,
+.list-section {
+  position: relative;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2), inset 0 0 0 1.5px rgba(255, 255, 255, 0.25);
+  border: none;
+  box-sizing: border-box;
+  padding: 1.8rem;
+}
+
+/* Fallback untuk Android/Browser lama yang tidak support backdrop-filter */
+@supports not (backdrop-filter: blur(1px)) {
+  .stat-card,
+  .generator-section,
+  .list-section {
+    background: rgba(30, 50, 60, 0.95);
+  }
+}
+
+/* Tambahkan garis emas pinggir pada setiap kartu */
+.stat-card::before,
+.generator-section::before,
+.list-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 20px;
+  padding: 2px;
+  background: linear-gradient(135deg, #dfba6b 0%, #b8913b 30%, #f7e5a9 70%, #b8913b 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 .stat-card {
-  background: white;
-  border-radius: 16px;
-  padding: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  box-shadow: 0 10px 25px rgba(43, 76, 89, 0.05);
-  border: 1px solid rgba(142, 167, 181, 0.2);
+  gap: 1.2rem;
 }
 
 .stat-icon {
   font-size: 2.2rem;
-  background: #f0f4f8;
-  width: 60px;
-  height: 60px;
+  background: rgba(255, 255, 255, 0.15);
+  width: 55px;
+  height: 55px;
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -322,53 +370,48 @@ const shareToWhatsApp = () => {
 }
 
 .stat-info h3 {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #687D87;
+  color: rgba(255, 255, 255, 0.7);
   margin: 0 0 0.2rem 0;
 }
 
 .stat-number {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #2B4C59;
+  color: #e5c158; /* Warna Emas */
   margin: 0;
   line-height: 1.2;
 }
 
 .stat-desc {
   font-size: 0.75rem;
-  color: #a5b1c2;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* Generator Section */
 .generator-section {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  margin-bottom: 2.5rem;
-  box-shadow: 0 10px 25px rgba(43, 76, 89, 0.05);
-  border: 1px solid rgba(142, 167, 181, 0.2);
-  box-sizing: border-box;
+  width: 100%;
+  max-width: 900px;
 }
 
 .generator-section h2 {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem;
-  color: #2B4C59;
+  font-size: 1.8rem;
+  color: #e5c158;
   margin: 0 0 0.4rem 0;
 }
 
 .generator-desc {
-  color: #687D87;
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.85rem;
   margin: 0 0 1.5rem 0;
 }
 
 .generator-form {
   display: flex;
-  flex-direction: column; /* Ubah ke vertikal agar muat input baris telepon */
+  flex-direction: column;
   gap: 1.2rem;
   width: 100%;
 }
@@ -381,59 +424,67 @@ const shareToWhatsApp = () => {
 
 .input-group {
   flex: 1;
-  min-width: 200px;
+  min-width: 240px;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.5rem;
 }
 
 .input-group label {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  color: #687D87;
+  color: rgba(255, 255, 255, 0.8);
 }
 
+/* WARNA FIELD DIJELASKAN (Lebih Gelap & Kontras Tinggi) */
 .generator-input {
   width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1.5px solid rgba(142, 167, 181, 0.3);
+  padding: 0.85rem 1.2rem;
+  background: rgba(15, 23, 42, 0.85); /* Slate gelap yang sangat jelas */
+  border: 1.5px solid rgba(173, 139, 58, 0.6); /* Border emas tegas */
   border-radius: 8px;
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.88rem;
-  color: #1D2D35;
+  font-size: 0.9rem;
+  color: #ffffff;
   outline: none;
-  transition: border-color 0.3s;
+  transition: all 0.3s;
   box-sizing: border-box;
 }
 
+.generator-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
 .generator-input:focus {
-  border-color: #2B4C59;
+  border-color: #e5c158;
+  box-shadow: 0 0 8px rgba(229, 193, 88, 0.3);
 }
 
 .btn-generate {
   align-self: flex-start;
-  background: #2B4C59;
-  color: white;
+  background: #e5c158;
+  color: #2B4C59;
   border: none;
-  padding: 0.8rem 1.8rem;
+  padding: 0.85rem 2rem;
   border-radius: 8px;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.88rem;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background 0.3s, transform 0.2s;
   font-family: 'Montserrat', sans-serif;
 }
 
 .btn-generate:hover {
-  background: #1D2D35;
+  background: #f7e5a9;
+  transform: translateY(-1px);
 }
 
 .result-box {
   margin-top: 1.5rem;
-  background: #F8FAFc;
+  background: rgba(15, 23, 42, 0.5); /* Hitam transparan kontras */
   padding: 1.5rem;
-  border-radius: 8px;
-  border: 1px dashed rgba(142, 167, 181, 0.5);
+  border-radius: 12px;
+  border: 1px dashed rgba(173, 139, 58, 0.4);
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
@@ -442,24 +493,36 @@ const shareToWhatsApp = () => {
 .result-row {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.5rem;
 }
 
 .result-row label {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  color: #687D87;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* WARNA FIELD DIJELASKAN */
+.url-output {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(173, 139, 58, 0.5);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: #e5c158;
+  font-family: monospace;
 }
 
 .message-preview {
   width: 100%;
-  padding: 0.8rem;
-  border: 1px solid #e2e8f0;
+  padding: 0.85rem;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(173, 139, 58, 0.5);
   border-radius: 6px;
-  background: white;
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.82rem;
-  color: #4b6584;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
   line-height: 1.5;
   resize: vertical;
   box-sizing: border-box;
@@ -471,23 +534,24 @@ const shareToWhatsApp = () => {
 }
 
 .btn-whatsapp {
-  background: #25D366; /* Warna hijau resmi Whatsapp */
+  background: #25D366;
   color: white;
   border: none;
-  padding: 0.8rem 1.8rem;
+  padding: 0.85rem 2rem;
   border-radius: 8px;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.88rem;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  transition: background 0.3s;
+  transition: background 0.3s, transform 0.2s;
   font-family: 'Montserrat', sans-serif;
 }
 
 .btn-whatsapp:hover {
   background: #20ba5a;
+  transform: translateY(-1px);
 }
 
 .wa-icon {
@@ -499,24 +563,13 @@ const shareToWhatsApp = () => {
   gap: 0.6rem;
 }
 
-.url-output {
-  flex: 1;
-  padding: 0.6rem 0.8rem;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  background: white;
-  font-size: 0.8rem;
-  color: #2B4C59;
-  font-family: monospace;
-}
-
 .btn-copy {
   background: #8EA7B5;
   color: white;
   border: none;
   padding: 0.6rem 1.2rem;
   border-radius: 6px;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.8rem;
   cursor: pointer;
   transition: background 0.3s;
@@ -530,18 +583,10 @@ const shareToWhatsApp = () => {
   background: #20bf6b;
 }
 
-.preview-tip {
-  font-size: 0.75rem;
-  color: #8EA7B5;
-}
-
 /* List section */
 .list-section {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 10px 25px rgba(43, 76, 89, 0.05);
-  border: 1px solid rgba(142, 167, 181, 0.2);
+  width: 100%;
+  max-width: 900px;
 }
 
 .list-header {
@@ -555,8 +600,8 @@ const shareToWhatsApp = () => {
 
 .list-header h2 {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 1.5rem;
-  color: #2B4C59;
+  font-size: 1.8rem;
+  color: #e5c158;
   margin: 0;
 }
 
@@ -579,7 +624,7 @@ const shareToWhatsApp = () => {
 .empty-state {
   text-align: center;
   padding: 3rem;
-  color: #687D87;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 /* Table styling */
@@ -595,21 +640,22 @@ const shareToWhatsApp = () => {
 }
 
 .dashboard-table th {
-  background: #f8fafc;
-  color: #687D87;
-  padding: 1rem;
+  background: rgba(15, 23, 42, 0.4);
+  color: rgba(255, 255, 255, 0.85);
+  padding: 1.2rem 1rem;
   font-weight: 600;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid rgba(173, 139, 58, 0.4);
 }
 
 .dashboard-table td {
-  padding: 1rem;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 1.2rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .name-col {
   font-weight: 600;
-  color: #2B4C59;
+  color: #e5c158;
 }
 
 .pax-col {
@@ -617,8 +663,8 @@ const shareToWhatsApp = () => {
 }
 
 .message-col {
-  color: #4b6584;
-  max-width: 300px;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 350px;
   word-wrap: break-word;
   white-space: pre-wrap;
 }

@@ -774,14 +774,21 @@ onUnmounted(() => {
   padding: 3rem 2rem;
   width: 90%;
   max-width: 380px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  /* Fallback solid white-gray for Android or older devices that don't support backdrop-filter */
+  background: rgba(255, 255, 255, 0.92);
   border-radius: 20px;
   box-shadow: 0 15px 35px rgba(18, 55, 42, 0.05), inset 0 0 0 1.5px rgba(255, 255, 255, 0.4);
   box-sizing: border-box;
   text-align: center;
   z-index: 3;
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .quran-card {
+    background: rgba(255, 255, 255, 0.12) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
 }
 
 .quran-card::before {
@@ -1145,9 +1152,8 @@ onUnmounted(() => {
   width: 90%;
   max-width: 380px;
   margin: 0 auto 2.5rem;
-  background: rgba(255, 255, 255, 0.45); /* Lower opacity for transparent blur glass effect */
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
+  /* Fallback solid white-gray for Android or older devices that don't support backdrop-filter */
+  background: rgba(255, 255, 255, 0.92);
   border-radius: 20px;
   box-shadow: 0 15px 35px rgba(43, 76, 89, 0.08), inset 0 0 0 1.5px rgba(255, 255, 255, 0.4);
   box-sizing: border-box;
@@ -1161,6 +1167,14 @@ onUnmounted(() => {
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .event-quran-card-style {
+    background: rgba(255, 255, 255, 0.45) !important;
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+  }
 }
 
 .event-section.active .event-quran-card-style {

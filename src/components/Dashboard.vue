@@ -60,6 +60,36 @@ const resetWishes = () => {
     wishes.value = []
   }
 }
+
+// Fitur Generate URL Tamu Undangan
+const inputGuestName = ref('')
+const generatedUrl = ref('')
+const isCopied = ref(false)
+
+const generateLink = () => {
+  if (!inputGuestName.value.trim()) {
+    generatedUrl.value = ''
+    return
+  }
+  // Dapatkan origin website (e.g., https://fitriaaswan.netlify.app atau localhost)
+  const origin = window.location.origin + window.location.pathname
+  // Gabungkan dengan format nama tamu (search query parameter)
+  generatedUrl.value = `${origin}?${encodeURIComponent(inputGuestName.value.trim())}`
+  isCopied.value = false
+}
+
+const copyToClipboard = async () => {
+  if (!generatedUrl.value) return
+  try {
+    await navigator.clipboard.writeText(generatedUrl.value)
+    isCopied.value = true
+    setTimeout(() => {
+      isCopied.value = false
+    }, 2000)
+  } catch (err) {
+    alert('Gagal menyalin link. Silakan salin secara manual.')
+  }
+}
 </script>
 
 <template>
@@ -105,6 +135,33 @@ const resetWishes = () => {
           <p class="stat-number">{{ totalTentatif }}</p>
           <span class="stat-desc">Belum memberikan kepastian</span>
         </div>
+      </div>
+    </div>
+
+    <!-- Generator URL Section -->
+    <div class="generator-section">
+      <h2>Generator Link Undangan Tamu</h2>
+      <p class="generator-desc">Gunakan alat ini untuk membuat tautan undangan kustom secara otomatis berdasarkan nama tamu yang ingin diundang.</p>
+      
+      <div class="generator-form">
+        <input 
+          type="text" 
+          v-model="inputGuestName" 
+          placeholder="Masukkan nama tamu (contoh: Bapak Budi & Istri)" 
+          @input="generateLink"
+          class="generator-input"
+        />
+        <button @click="generateLink" class="btn-generate">Buat Link</button>
+      </div>
+
+      <div v-if="generatedUrl" class="result-box">
+        <div class="url-text-wrapper">
+          <input type="text" readonly :value="generatedUrl" class="url-output" />
+          <button @click="copyToClipboard" class="btn-copy" :class="{ 'copied': isCopied }">
+            {{ isCopied ? 'Tersalin! ✓' : 'Salin Link' }}
+          </button>
+        </div>
+        <span class="preview-tip">Kirim link ini langsung ke Whatsapp atau media sosial tamu yang dituju.</span>
       </div>
     </div>
 
@@ -224,6 +281,121 @@ const resetWishes = () => {
 .stat-desc {
   font-size: 0.75rem;
   color: #a5b1c2;
+}
+
+/* Generator Section */
+.generator-section {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 10px 25px rgba(43, 76, 89, 0.05);
+  border: 1px solid rgba(142, 167, 181, 0.2);
+  box-sizing: border-box;
+}
+
+.generator-section h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  color: #2B4C59;
+  margin: 0 0 0.4rem 0;
+}
+
+.generator-desc {
+  color: #687D87;
+  font-size: 0.85rem;
+  margin: 0 0 1.5rem 0;
+}
+
+.generator-form {
+  display: flex;
+  gap: 0.8rem;
+  width: 100%;
+}
+
+.generator-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid rgba(142, 167, 181, 0.3);
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.88rem;
+  color: #1D2D35;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.generator-input:focus {
+  border-color: #2B4C59;
+}
+
+.btn-generate {
+  background: #2B4C59;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.btn-generate:hover {
+  background: #1D2D35;
+}
+
+.result-box {
+  margin-top: 1.2rem;
+  background: #F8FAFc;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px dashed rgba(142, 167, 181, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.url-text-wrapper {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.url-output {
+  flex: 1;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: white;
+  font-size: 0.8rem;
+  color: #2B4C59;
+  font-family: monospace;
+}
+
+.btn-copy {
+  background: #8EA7B5;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-copy:hover {
+  background: #2B4C59;
+}
+
+.btn-copy.copied {
+  background: #20bf6b;
+}
+
+.preview-tip {
+  font-size: 0.75rem;
+  color: #8EA7B5;
 }
 
 /* List section */

@@ -63,14 +63,14 @@ onMounted(() => {
 
 <style scoped>
 .petals-container {
-  position: absolute;
+  position: fixed; /* Fixed viewport agar kelopak bunga terus berguguran di seluruh halaman saat di-scroll */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
   pointer-events: none;
-  z-index: 5;
+  z-index: 1; /* Di bawah konten utama agar tidak menghalangi teks */
 }
 
 .petal {

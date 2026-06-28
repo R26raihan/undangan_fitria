@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import CoverScreen from './components/CoverScreen.vue'
 import InvitationContent from './components/InvitationContent.vue'
 import MusicPlayer from './components/MusicPlayer.vue'
 import FallingPetals from './components/FallingPetals.vue'
 import FloatingClouds from './components/FloatingClouds.vue'
+import Dashboard from './components/Dashboard.vue'
 
 const isOpened = ref(false)
 const isMusicPlaying = ref(false)
+const currentRoute = ref(window.location.hash)
 
 const handleOpenInvitation = () => {
   isOpened.value = true
@@ -17,22 +19,42 @@ const handleOpenInvitation = () => {
 const handleToggleMusic = (state: boolean) => {
   isMusicPlaying.value = state
 }
+
+const updateRoute = () => {
+  currentRoute.value = window.location.hash
+}
+
+onMounted(() => {
+  window.addEventListener('hashchange', updateRoute)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('hashchange', updateRoute)
+})
 </script>
 
 <template>
   <div class="mobile-container">
-    <!-- Falling Petals Background -->
-    <FallingPetals />
-    <!-- Floating Clouds Background -->
-    <FloatingClouds />
+    <!-- Render Dashboard if hash route matches #/dashboard -->
+    <div v-if="currentRoute === '#/dashboard'" class="dashboard-wrapper">
+      <Dashboard />
+    </div>
 
-    <Transition name="fade">
-      <CoverScreen v-if="!isOpened" @open="handleOpenInvitation" />
-    </Transition>
+    <!-- Otherwise render standard Wedding Invitation screen -->
+    <div v-else>
+      <!-- Falling Petals Background -->
+      <FallingPetals />
+      <!-- Floating Clouds Background -->
+      <FloatingClouds />
 
-    <div v-if="isOpened" class="content-wrapper">
-      <InvitationContent />
-      <MusicPlayer :isPlaying="isMusicPlaying" @toggle="handleToggleMusic" />
+      <Transition name="fade">
+        <CoverScreen v-if="!isOpened" @open="handleOpenInvitation" />
+      </Transition>
+
+      <div v-if="isOpened" class="content-wrapper">
+        <InvitationContent />
+        <MusicPlayer :isPlaying="isMusicPlaying" @toggle="handleToggleMusic" />
+      </div>
     </div>
   </div>
 </template>

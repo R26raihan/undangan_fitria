@@ -43,14 +43,14 @@
 
 <style scoped>
 .clouds-backdrop {
-  position: absolute;
+  position: fixed; /* Fixed viewport agar awan terlihat melayang di semua halaman yang di-scroll */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
   pointer-events: none;
-  z-index: 3;
+  z-index: 1; /* Di belakang konten utama */
 }
 
 .cloud {

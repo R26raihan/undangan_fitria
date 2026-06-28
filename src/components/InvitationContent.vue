@@ -39,6 +39,7 @@ const calculateTimeLeft = () => {
 interface Wish {
   name: string
   status: string
+  guestCount?: number // Jumlah tamu yang diajak
   message: string
   date: string
 }
@@ -47,12 +48,14 @@ const wishes = ref<Wish[]>([
   {
     name: 'Budi & Keluarga',
     status: 'Hadir',
-    message: 'Selamat menempuh hidup baru Dian dan Syahdan! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah. Amin.',
+    guestCount: 4,
+    message: 'Selamat menempuh hidup baru Fitria dan Aswan! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah. Amin.',
     date: '2 jam yang lalu'
   },
   {
     name: 'Siti Aminah',
     status: 'Hadir',
+    guestCount: 1,
     message: 'Happy wedding! Lancar-lancar sampai hari H yaa!',
     date: '5 jam yang lalu'
   }
@@ -60,6 +63,7 @@ const wishes = ref<Wish[]>([
 
 const newName = ref('')
 const newStatus = ref('Hadir')
+const newGuestCount = ref(1) // Default 1 pax
 const newMessage = ref('')
 
 const loadWishes = () => {
@@ -77,6 +81,7 @@ const submitWish = () => {
   const newWish: Wish = {
     name: newName.value,
     status: newStatus.value,
+    guestCount: newStatus.value === 'Hadir' ? newGuestCount.value : 0, // Hanya hitung pax jika hadir
     message: newMessage.value,
     date: 'Baru saja'
   }
@@ -87,6 +92,7 @@ const submitWish = () => {
   // Reset form
   newName.value = ''
   newMessage.value = ''
+  newGuestCount.value = 1
 }
 
 // Copy to Clipboard feature
@@ -369,7 +375,7 @@ onUnmounted(() => {
       </div>
     </section>
 
-    <!-- Digital Gift / Amplop Digital -->
+    <!-- Digital Gift / Amplop Digital (Hidden/Commented)
     <section class="section gift-section">
       <div class="section-header">
         <h2 class="section-title">Kado Digital</h2>
@@ -379,27 +385,26 @@ onUnmounted(() => {
       </div>
 
       <div class="gift-cards">
-        <!-- Card 1 -->
         <div class="gift-card">
           <div class="bank-name">BANK BCA</div>
           <div class="account-number">1234567890</div>
           <div class="account-name">a.n Dian Rahmawati</div>
           <button @click="copyToClipboard('1234567890', 'bca')" class="copy-btn">
-            {{ copySuccess['bca'] ? 'Berhasil Disalin!' : 'Salin No. Rekening' }}
+            Salin No. Rekening
           </button>
         </div>
 
-        <!-- Card 2 -->
         <div class="gift-card">
           <div class="bank-name">BANK MANDIRI</div>
           <div class="account-number">0987654321</div>
           <div class="account-name">a.n Syahdan Maulana</div>
           <button @click="copyToClipboard('0987654321', 'mandiri')" class="copy-btn">
-            {{ copySuccess['mandiri'] ? 'Berhasil Disalin!' : 'Salin No. Rekening' }}
+            Salin No. Rekening
           </button>
         </div>
       </div>
     </section>
+    -->
 
     <!-- RSVP / Wishes Form -->
     <section class="section wishes-section">
@@ -410,35 +415,55 @@ onUnmounted(() => {
         </p>
       </div>
 
-      <!-- Form -->
-      <form @submit.prevent="submitWish" class="wishes-form">
-        <div class="form-group">
-          <label>Nama Lengkap</label>
-          <input v-model="newName" type="text" placeholder="Masukkan nama Anda" required />
-        </div>
+      <!-- Wishes Wrapper inside quran-card style (No nested double cards) -->
+      <div class="quran-card" style="width: 100%; max-width: 380px; margin-bottom: 2rem; box-sizing: border-box;">
+        <!-- Form -->
+        <form @submit.prevent="submitWish" class="wishes-form-inside">
+          <div class="form-group">
+            <label>Nama Lengkap</label>
+            <input v-model="newName" type="text" placeholder="Masukkan nama Anda" required />
+          </div>
 
-        <div class="form-group">
-          <label>Konfirmasi Kehadiran</label>
-          <select v-model="newStatus">
-            <option value="Hadir">Saya Akan Hadir</option>
-            <option value="Tidak Hadir">Maaf, Saya Tidak Bisa Hadir</option>
-            <option value="Tentatif">Masih Tentatif</option>
-          </select>
-        </div>
+          <div class="form-group">
+            <label>Konfirmasi Kehadiran</label>
+            <select v-model="newStatus">
+              <option value="Hadir">Saya Akan Hadir</option>
+              <option value="Tidak Hadir">Maaf, Saya Tidak Bisa Hadir</option>
+              <option value="Tentatif">Masih Tentatif</option>
+            </select>
+          </div>
 
-        <div class="form-group">
-          <label>Ucapan / Doa Restu</label>
-          <textarea v-model="newMessage" rows="4" placeholder="Tuliskan ucapan selamat & doa Anda..." required></textarea>
-        </div>
+          <!-- Input guestCount (Hanya muncul jika memilih 'Hadir') -->
+          <div v-if="newStatus === 'Hadir'" class="form-group">
+            <label>Jumlah Tamu (Pax)</label>
+            <select v-model.number="newGuestCount">
+              <option :value="1">1 Orang</option>
+              <option :value="2">2 Orang</option>
+              <option :value="3">3 Orang</option>
+              <option :value="4">4 Orang</option>
+              <option :value="5">5 Orang</option>
+            </select>
+          </div>
 
-        <button type="submit" class="submit-btn">Kirim Ucapan</button>
-      </form>
+          <div class="form-group">
+            <label>Ucapan / Doa Restu</label>
+            <textarea v-model="newMessage" rows="4" placeholder="Tuliskan ucapan selamat & doa Anda..." required></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn">Kirim Ucapan</button>
+        </form>
+      </div>
 
       <!-- Wishes List -->
       <div class="wishes-list">
         <div v-for="(wish, idx) in wishes" :key="idx" class="wish-item">
           <div class="wish-header">
-            <span class="wish-name">{{ wish.name }}</span>
+            <span class="wish-name">
+              {{ wish.name }} 
+              <span v-if="wish.status === 'Hadir' && wish.guestCount" class="guest-count-badge">
+                ({{ wish.guestCount }} Orang)
+              </span>
+            </span>
             <span class="wish-status" :class="wish.status.toLowerCase().replace(' ', '-')">
               {{ wish.status }}
             </span>
@@ -452,8 +477,8 @@ onUnmounted(() => {
     <!-- Footer -->
     <footer class="invitation-footer">
       <p>Terima kasih atas kehadiran & doa restu Bapak/Ibu/Saudara/i.</p>
-      <h2 class="footer-names">Dian & Syahdan</h2>
-      <p class="copyright">© 2026 Dian & Syahdan. All Rights Reserved.</p>
+      <h2 class="footer-names">Fitria & Aswan</h2>
+      <p class="copyright">© 2026 Fitria & Aswan. All Rights Reserved.</p>
     </footer>
 
   </div>
@@ -1439,6 +1464,12 @@ onUnmounted(() => {
   margin-bottom: 2rem;
 }
 
+.wishes-form-inside {
+  width: 100%;
+  background: transparent; /* No inner card background */
+  box-sizing: border-box;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -1496,12 +1527,33 @@ onUnmounted(() => {
 }
 
 .wish-item {
-  background: var(--color-bg-white);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+  position: relative;
+  background: rgba(255, 255, 255, 0.85); /* Semi-transparent warm white */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(142, 167, 181, 0.4);
+  padding: 1.2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(43, 76, 89, 0.04);
   text-align: left;
+  box-sizing: border-box;
+}
+
+/* Slim gradient gold outline for wish items */
+.wish-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 16px;
+  padding: 1.5px;
+  background: linear-gradient(135deg, #dfba6b 0%, #b8913b 50%, #f7e5a9 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 .wish-header {
@@ -1515,6 +1567,18 @@ onUnmounted(() => {
   font-weight: 600;
   font-size: 0.85rem;
   color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.guest-count-badge {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  background: rgba(142, 167, 181, 0.15);
+  padding: 0.1rem 0.4rem;
+  border-radius: 10px;
 }
 
 .wish-status {

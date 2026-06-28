@@ -243,39 +243,33 @@ onUnmounted(() => {
 
     <!-- Mempelai Section -->
     <section class="section mempelai-section">
-      <div class="mempelai-dome-frame">
-        <!-- Precise SVG Dome Background (100% Symmetrical) -->
-        <svg class="dome-svg-bg" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M 0,100 L 0,35 C 0,22 12,18 22,14 C 36,10 46,3 50,0 C 54,3 64,10 78,14 C 88,18 100,22 100,35 L 100,100 Z" fill="rgba(255,255,255,0.06)" stroke="rgba(229, 193, 88, 0.7)" stroke-width="0.8" />
-          <path d="M 2.5,97.5 L 2.5,36 C 2.5,24 13.5,20.5 23,16.5 C 36.5,12.5 46,5.5 50,2.5 C 54,5.5 63.5,12.5 77,16.5 C 86.5,20.5 97.5,24 97.5,36 L 97.5,97.5" fill="none" stroke="rgba(229,193,88,0.4)" stroke-width="0.5" stroke-dasharray="2,2" />
-        </svg>
+      <div class="section-header" style="margin-bottom: 2rem; position: relative; z-index: 2;">
+        <h2 class="section-title">Mempelai</h2>
+        <p class="section-description">
+          Maha Suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan. Ya Allah, perkenankanlah kami menikahkan putra-putri kami:
+        </p>
+      </div>
 
-        <div class="section-header" style="margin-bottom: 1rem; position: relative; z-index: 2;">
-          <h2 class="section-title">Mempelai</h2>
-          <p class="section-description">
-            Maha Suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan. Ya Allah, perkenankanlah kami menikahkan putra-putri kami:
-          </p>
+      <div class="mempelai-row">
+        <!-- Groom Card (Aswan) -->
+        <div class="mempelai-card">
+          <div class="mempelai-photo-container">
+            <img src="/src/assets/aswan.JPG" alt="Andi Aswan Hidayat" class="mempelai-img" />
+          </div>
+          <div class="mempelai-name-block">
+            <h3 class="mempelai-name">Andi Aswan Hidayat</h3>
+          </div>
         </div>
 
-        <div class="mempelai-row">
-          <!-- Bride Card -->
-          <div class="mempelai-card">
-            <div class="avatar-wrapper">
-              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=60" alt="Dian" class="mempelai-img" />
-            </div>
-            <h3 class="mempelai-name">Fitriani</h3>
-            <!-- <p class="parent-info">Putri pertama dari Bapak Ahmad Rosyidi & Ibu Siti Aminah</p> -->
+        <div class="mempelai-divider">&</div>
+
+        <!-- Bride Card (Fitri) -->
+        <div class="mempelai-card">
+          <div class="mempelai-photo-container">
+            <img src="/src/assets/fitri.JPG" alt="Fitriani" class="mempelai-img" />
           </div>
-
-          <div class="mempelai-divider">&</div>
-
-          <!-- Groom Card -->
-          <div class="mempelai-card">
-            <div class="avatar-wrapper">
-              <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&auto=format&fit=crop&q=60" alt="Syahdan" class="mempelai-img" />
-            </div>
-            <h3 class="mempelai-name">Andi Aswan Hidayat</h3>
-            <!-- <p class="parent-info">Putra kedua dari Bapak Bambang Susilo & Ibu Herawati</p> -->
+          <div class="mempelai-name-block">
+            <h3 class="mempelai-name">Fitriani</h3>
           </div>
         </div>
       </div>
@@ -284,37 +278,63 @@ onUnmounted(() => {
     <!-- Acara / Event Details Section -->
     <section class="section event-section">
       <div class="section-header">
-        <h2 class="section-title" style="color: var(--color-bg-light)">Acara</h2>
-        <p class="section-description" style="color: #c9d6cf">
+        <h2 class="section-title" style="color: var(--color-primary)">Acara</h2>
+        <p class="section-description" style="color: var(--color-text-muted)">
           Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud menyelenggarakan acara pernikahan kami pada:
         </p>
       </div>
 
-      <div class="event-cards">
-        <!-- Akad Card -->
-        <div class="event-card">
-          <div class="card-icon">💍</div>
-          <h3>Akad Nikah</h3>
-          <p class="event-time">Pukul 08.00 - 10.00 WIB</p>
-          <div class="event-divider"></div>
-          <p class="event-venue"><strong>Masjid Agung Al-Falah</strong></p>
-          <p class="event-address">Jl. Pahlawan No. 45, Kota Bandung</p>
+      <div class="event-quran-card-style">
+        <!-- Akad Row -->
+        <div class="event-row-detail">
+          <div class="event-icon-circle">💍</div>
+          <div class="event-info-text">
+            <h3>Akad Nikah</h3>
+            <span class="event-time-span">Pukul 09.00 WIB</span>
+          </div>
         </div>
 
-        <!-- Resepsi Card -->
-        <div class="event-card">
-          <div class="card-icon">🥂</div>
-          <h3>Resepsi</h3>
-          <p class="event-time">Pukul 11.00 - 16.00 WIB</p>
-          <div class="event-divider"></div>
-          <p class="event-venue"><strong>Gedung Serbaguna Kencana</strong></p>
-          <p class="event-address">Jl. Diponegoro No. 12, Kota Bandung</p>
+        <!-- Elegant Thin Divider Line -->
+        <div class="event-internal-divider"></div>
+
+        <!-- Resepsi Row -->
+        <div class="event-row-detail">
+          <div class="event-icon-circle">🥂</div>
+          <div class="event-info-text">
+            <h3>Resepsi Pernikahan</h3>
+            <span class="event-time-span">Pukul 11.00 WIB - Selesai</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Maps / Location Section (Terpisah) -->
+    <section class="section maps-section">
+      <div class="section-header">
+        <h2 class="section-title">Lokasi Acara</h2>
+        <p class="section-description">
+          Klik tombol di bawah ini untuk melihat rute navigasi Google Maps menuju lokasi acara pernikahan kami:
+        </p>
+      </div>
+
+      <div class="map-card-wrapper">
+        <div class="map-iframe-container">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d3966.4757801291635!2d106.72123307499024!3d-6.2007909937869705!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNsKwMTInMDIuOSJTIDEwNsKwNDMnMjUuNyJF!5e0!3m2!1sid!2sid!4v1782657950236!5m2!1sid!2sid" 
+            width="100%" 
+            height="260" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="strict-origin-when-cross-origin">
+          </iframe>
         </div>
       </div>
 
       <!-- Map Button -->
-      <a href="https://maps.google.com" target="_blank" class="maps-btn">
-        <span>📍</span> Petunjuk Lokasi Maps
+      <a href="https://maps.google.com/?q=-6.200791,106.723812" target="_blank" class="maps-btn">
+        <span>📍</span> Petunjuk Lokasi Google Maps
       </a>
     </section>
 
@@ -545,12 +565,12 @@ onUnmounted(() => {
 }
 
 .section-title::after {
-  content: '♦';
-  font-size: 0.8rem;
-  color: var(--color-secondary);
+  content: '';
   display: block;
-  text-align: center;
-  margin-top: 0.2rem;
+  width: 40px;
+  height: 1.5px;
+  background-color: var(--color-secondary);
+  margin: 0.4rem auto 0;
 }
 
 .section-subtitle {
@@ -928,69 +948,124 @@ onUnmounted(() => {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.8rem;
   width: 100%;
   position: relative;
   z-index: 2;
 }
 
-.mempelai-dome-frame {
+
+
+/* ── Simple Photo Container for Canva Images ── */
+.mempelai-card {
+  text-align: center;
+  flex: 1;
+  max-width: 145px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* Base states before animation triggers (active class on section) */
+.mempelai-section .section-header h2,
+.mempelai-section .section-header p,
+.mempelai-section .mempelai-card:first-child,
+.mempelai-section .mempelai-card:last-child,
+.mempelai-section .mempelai-divider {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+/* Delay & Specific Transitions when section is active */
+.mempelai-section.active .section-header h2 {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.1s;
+}
+
+.mempelai-section.active .section-header p {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.3s;
+}
+
+/* Bride Card (Slides in from Left + Fade) */
+.mempelai-section .mempelai-card:first-child {
+  transform: translateX(-30px) translateY(10px);
+}
+.mempelai-section.active .mempelai-card:first-child {
+  opacity: 1;
+  transform: translateX(0) translateY(0);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: 0.5s;
+}
+
+/* Groom Card (Slides in from Right + Fade) */
+.mempelai-section .mempelai-card:last-child {
+  transform: translateX(30px) translateY(10px);
+}
+.mempelai-section.active .mempelai-card:last-child {
+  opacity: 1;
+  transform: translateX(0) translateY(0);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: 0.5s;
+}
+
+/* Divider Ampersand (&) Zoom/Fade in the middle */
+.mempelai-section .mempelai-divider {
+  transform: scale(0.5);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.mempelai-section.active .mempelai-divider {
+  opacity: 1;
+  transform: scale(1);
+  transition-delay: 0.8s;
+}
+
+.mempelai-photo-container {
   position: relative;
-  width: 95%;
-  max-width: 375px;
-  margin: 1rem auto;
-  padding: 5.5rem 1.4rem 2.5rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-}
-
-.dome-svg-bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  pointer-events: none;
-  filter: drop-shadow(0px 8px 20px rgba(0, 0, 0, 0.15));
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 0 0 20px 20px;
-}
-
-.avatar-wrapper {
-  width: 95px;
-  height: 95px;
-  border-radius: 50%;
+  width: 120px;
+  height: 160px;
+  margin: 0 auto;
   overflow: hidden;
-  border: 2.5px solid var(--color-secondary);
-  margin: 0 auto 0.8rem;
-  box-shadow: 0 6px 15px rgba(18, 55, 42, 0.15);
-  position: relative;
+  border-radius: 8px; /* Sudut sedikit membulat agar halus */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* Micro-interaction hover effect on photos */
+.mempelai-photo-container:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
 }
 
 .mempelai-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center top;
+  display: block;
 }
 
-.mempelai-card {
-  text-align: center;
-  flex: 1;
-  max-width: 140px;
+/* Name block */
+.mempelai-name-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  flex-wrap: wrap;
 }
 
 .mempelai-name {
   font-family: var(--font-serif);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: var(--color-primary);
   font-weight: 700;
-  margin-bottom: 0.4rem;
+  margin: 0;
   line-height: 1.3;
-}
-
-.parent-info {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
+  text-align: center;
 }
 
 .mempelai-divider {
@@ -999,87 +1074,192 @@ onUnmounted(() => {
   font-weight: normal;
   color: var(--color-secondary);
   flex-shrink: 0;
-  padding: 0 0.3rem;
+  padding: 0 0.2rem;
   align-self: center;
 }
 
 /* Event Section */
 .event-section {
-  background: radial-gradient(circle at center, #1b4435 0%, var(--color-primary) 100%);
-  color: var(--color-bg-light);
+  background: transparent; /* Membiarkan gambar background bawaan terlihat konsisten */
+  color: var(--color-text-dark);
+  padding: 3rem 1.5rem;
 }
 
-.event-cards {
+/* Unified Single Event Frame matching Quran Card style */
+.event-quran-card-style {
+  position: relative;
+  width: 90%;
+  max-width: 380px;
+  margin: 0 auto 2.5rem;
+  background: rgba(255, 255, 255, 0.45); /* Lower opacity for transparent blur glass effect */
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(43, 76, 89, 0.08), inset 0 0 0 1.5px rgba(255, 255, 255, 0.4);
+  box-sizing: border-box;
+  padding: 2.2rem 1.8rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  width: 100%;
-  max-width: 360px;
-  margin-bottom: 2rem;
+  z-index: 3;
+  
+  /* Animation states */
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.event-card {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(173, 139, 58, 0.3);
-  padding: 2rem 1.5rem;
-  border-radius: 12px;
-  text-align: center;
-  backdrop-filter: blur(8px);
+.event-section.active .event-quran-card-style {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.4s;
 }
 
-.card-icon {
-  font-size: 2rem;
-  margin-bottom: 0.8rem;
+.event-section .section-header h2,
+.event-section .section-header p {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease, transform 1s ease;
 }
 
-.event-card h3 {
+.event-section.active .section-header h2 {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.1s;
+}
+
+.event-section.active .section-header p {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.25s;
+}
+
+.event-quran-card-style::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 20px;
+  padding: 2px;
+  background: linear-gradient(135deg, #dfba6b 0%, #b8913b 30%, #f7e5a9 70%, #b8913b 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.event-row-detail {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+}
+
+.event-icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--color-bg-light);
+  border: 1.5px solid var(--color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.event-info-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.event-info-text h3 {
   font-family: var(--font-serif);
-  font-size: 1.3rem;
-  color: var(--color-secondary-light);
-  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: var(--color-primary);
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.3px;
 }
 
-.event-time {
+.event-time-span {
   font-size: 0.85rem;
-  color: #e2e8f0;
+  color: var(--color-text-muted);
+  font-weight: 500;
 }
 
-.event-divider {
-  width: 50px;
+/* Internal horizontal line divider */
+.event-internal-divider {
+  width: 100%;
   height: 1px;
-  background-color: var(--color-secondary);
-  margin: 1rem auto;
-  opacity: 0.6;
-}
-
-.event-venue {
-  font-size: 0.95rem;
-  margin-bottom: 0.3rem;
-}
-
-.event-address {
-  font-size: 0.8rem;
-  color: #cbd5e1;
+  background: linear-gradient(
+    to right,
+    rgba(142, 167, 181, 0.1) 0%,
+    rgba(142, 167, 181, 0.4) 50%,
+    rgba(142, 167, 181, 0.1) 100%
+  );
 }
 
 .maps-btn {
-  background: linear-gradient(135deg, var(--color-secondary) 0%, #c5a059 100%);
-  color: var(--color-primary);
+  background-color: #2B4C59 !important; /* Slate Blue Tua Solid */
+  background-image: none !important;     /* Hapus background gradient */
+  border: 1.5px solid #2B4C59 !important; /* Gunakan border solid senada */
+  color: #FFFFFF !important;              /* Teks putih solid */
   text-decoration: none;
-  padding: 0.8rem 1.8rem;
+  padding: 0.9rem 2.2rem;
   border-radius: 30px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  font-weight: 700;
+  font-size: 0.9rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  z-index: 99; /* Pastikan z-index sangat tinggi agar tidak tertutup */
+  position: relative;
 }
 
 .maps-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(43, 76, 89, 0.4);
+}
+
+/* Maps Section */
+.maps-section {
+  background: transparent;
+  padding: 3.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Specific frame card wrapper for the map, separated from event-quran-card-style to ensure iframe visibility */
+.map-card-wrapper {
+  position: relative;
+  width: 90%;
+  max-width: 380px;
+  margin: 0 auto 2rem;
+  background: rgba(255, 255, 255, 0.85); /* Semi-transparent solid white background */
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: 20px;
+  border: 1.5px solid rgba(142, 167, 181, 0.4);
+  box-shadow: 0 12px 30px rgba(43, 76, 89, 0.08);
+  box-sizing: border-box;
+  padding: 0.8rem; /* Padding tipis di sekitar iframe */
+  z-index: 3;
+}
+
+.map-iframe-container {
+  width: 100%;
+  height: 260px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 /* Gallery Section */

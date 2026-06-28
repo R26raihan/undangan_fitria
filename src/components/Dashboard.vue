@@ -63,8 +63,19 @@ const resetWishes = () => {
 
 // Fitur Generate URL Tamu Undangan
 const inputGuestName = ref('')
+const inputPhone = ref('') // Input nomor telepon WA tamu
 const generatedUrl = ref('')
 const isCopied = ref(false)
+
+// Template Pesan WhatsApp Default
+const templateText = computed(() => {
+  return `Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i *${inputGuestName.value || '[Nama Tamu]'}* untuk menghadiri acara pernikahan kami Fitria & Aswan.
+
+Detail informasi dan lokasi undangan dapat diakses melalui tautan berikut:
+${generatedUrl.value || '[Link Undangan]'}
+
+Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu. Terima kasih.`
+})
 
 const generateLink = () => {
   if (!inputGuestName.value.trim()) {
@@ -89,6 +100,27 @@ const copyToClipboard = async () => {
   } catch (err) {
     alert('Gagal menyalin link. Silakan salin secara manual.')
   }
+}
+
+// Fungsi mengirim pesan Whatsapp langsung
+const shareToWhatsApp = () => {
+  if (!inputGuestName.value.trim()) {
+    alert('Harap masukkan nama tamu terlebih dahulu.')
+    return
+  }
+  
+  // Bersihkan format nomor telepon (menghilangkan spasi, strip, dll)
+  let phone = inputPhone.value.replace(/[^0-9]/g, '')
+  if (phone.startsWith('0')) {
+    phone = '62' + phone.slice(1) // Format ke kode negara Indonesia (62)
+  }
+
+  const encodedText = encodeURIComponent(templateText.value)
+  const waUrl = phone 
+    ? `https://api.whatsapp.com/send?phone=${phone}&text=${encodedText}` 
+    : `https://api.whatsapp.com/send?text=${encodedText}`
+    
+  window.open(waUrl, '_blank')
 }
 </script>
 
@@ -144,24 +176,51 @@ const copyToClipboard = async () => {
       <p class="generator-desc">Gunakan alat ini untuk membuat tautan undangan kustom secara otomatis berdasarkan nama tamu yang ingin diundang.</p>
       
       <div class="generator-form">
-        <input 
-          type="text" 
-          v-model="inputGuestName" 
-          placeholder="Masukkan nama tamu (contoh: Bapak Budi & Istri)" 
-          @input="generateLink"
-          class="generator-input"
-        />
-        <button @click="generateLink" class="btn-generate">Buat Link</button>
+        <div class="input-row">
+          <div class="input-group">
+            <label>Nama Tamu</label>
+            <input 
+              type="text" 
+              v-model="inputGuestName" 
+              placeholder="Contoh: Bapak Budi & Istri" 
+              @input="generateLink"
+              class="generator-input"
+            />
+          </div>
+          <div class="input-group">
+            <label>Nomor WhatsApp Tamu (Opsional)</label>
+            <input 
+              type="text" 
+              v-model="inputPhone" 
+              placeholder="Contoh: 08123456789" 
+              class="generator-input"
+            />
+          </div>
+        </div>
+        <button @click="generateLink" class="btn-generate">Buat Link Undangan</button>
       </div>
 
       <div v-if="generatedUrl" class="result-box">
-        <div class="url-text-wrapper">
-          <input type="text" readonly :value="generatedUrl" class="url-output" />
-          <button @click="copyToClipboard" class="btn-copy" :class="{ 'copied': isCopied }">
-            {{ isCopied ? 'Tersalin! ✓' : 'Salin Link' }}
+        <div class="result-row">
+          <label>Link Undangan Hasil Generate:</label>
+          <div class="url-text-wrapper">
+            <input type="text" readonly :value="generatedUrl" class="url-output" />
+            <button @click="copyToClipboard" class="btn-copy" :class="{ 'copied': isCopied }">
+              {{ isCopied ? 'Tersalin! ✓' : 'Salin Link' }}
+            </button>
+          </div>
+        </div>
+
+        <div class="result-row">
+          <label>Pratinjau Pesan Kirim WhatsApp:</label>
+          <textarea readonly class="message-preview" rows="6">{{ templateText }}</textarea>
+        </div>
+
+        <div class="actions-row">
+          <button @click="shareToWhatsApp" class="btn-whatsapp">
+            <span class="wa-icon">💬</span> Kirim / Bagikan ke WhatsApp
           </button>
         </div>
-        <span class="preview-tip">Kirim link ini langsung ke Whatsapp atau media sosial tamu yang dituju.</span>
       </div>
     </div>
 
@@ -309,12 +368,33 @@ const copyToClipboard = async () => {
 
 .generator-form {
   display: flex;
-  gap: 0.8rem;
+  flex-direction: column; /* Ubah ke vertikal agar muat input baris telepon */
+  gap: 1.2rem;
   width: 100%;
 }
 
-.generator-input {
+.input-row {
+  display: flex;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.input-group {
   flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.input-group label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #687D87;
+}
+
+.generator-input {
+  width: 100%;
   padding: 0.75rem 1rem;
   border: 1.5px solid rgba(142, 167, 181, 0.3);
   border-radius: 8px;
@@ -323,6 +403,7 @@ const copyToClipboard = async () => {
   color: #1D2D35;
   outline: none;
   transition: border-color 0.3s;
+  box-sizing: border-box;
 }
 
 .generator-input:focus {
@@ -330,10 +411,11 @@ const copyToClipboard = async () => {
 }
 
 .btn-generate {
+  align-self: flex-start;
   background: #2B4C59;
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
+  padding: 0.8rem 1.8rem;
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.88rem;
@@ -347,14 +429,69 @@ const copyToClipboard = async () => {
 }
 
 .result-box {
-  margin-top: 1.2rem;
+  margin-top: 1.5rem;
   background: #F8FAFc;
-  padding: 1rem;
+  padding: 1.5rem;
   border-radius: 8px;
   border: 1px dashed rgba(142, 167, 181, 0.5);
   display: flex;
   flex-direction: column;
+  gap: 1.2rem;
+}
+
+.result-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.result-row label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #687D87;
+}
+
+.message-preview {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: white;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.82rem;
+  color: #4b6584;
+  line-height: 1.5;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.actions-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-whatsapp {
+  background: #25D366; /* Warna hijau resmi Whatsapp */
+  color: white;
+  border: none;
+  padding: 0.8rem 1.8rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
   gap: 0.5rem;
+  transition: background 0.3s;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.btn-whatsapp:hover {
+  background: #20ba5a;
+}
+
+.wa-icon {
+  font-size: 1.1rem;
 }
 
 .url-text-wrapper {

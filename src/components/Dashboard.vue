@@ -67,14 +67,23 @@ const inputPhone = ref('') // Input nomor telepon WA tamu
 const generatedUrl = ref('')
 const isCopied = ref(false)
 
-// Template Pesan WhatsApp Default
 const templateText = computed(() => {
-  return `Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i *${inputGuestName.value || '[Nama Tamu]'}* untuk menghadiri acara pernikahan kami Fitria & Aswan.
+  return `Assalamu'alaikum Wr. Wb.
 
-Detail informasi dan lokasi undangan dapat diakses melalui tautan berikut:
-${generatedUrl.value || '[Link Undangan]'}
+Halo *${inputGuestName.value || '[Nama Tamu]'}*, semoga Anda dan keluarga selalu dalam keadaan sehat dan berbahagia.
 
-Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu. Terima kasih.`
+Di hari yang penuh rasa syukur ini, kami ingin membagikan kabar bahagia. Atas izin Allah SWT, kami bermaksud untuk melangsungkan pernikahan kami, **Fitria & Aswan**.
+
+Tanpa mengurangi rasa hormat, kami sangat berharap *${inputGuestName.value || '[Nama Tamu]'}* beserta keluarga berkenan hadir untuk memberikan doa restu secara langsung di hari bahagia kami.
+
+Detail acara dan lokasi dapat dilihat melalui tautan undangan digital di bawah ini:
+💌 ${generatedUrl.value || '[Link Undangan]'}
+
+Kehadiran dan doa tulus dari Anda merupakan kado terindah bagi kami. Terima kasih banyak atas perhatian dan doa baiknya.
+
+Wassalamu'alaikum Wr. Wb.
+
+— *Fitria & Aswan*`
 })
 
 const generateLink = () => {

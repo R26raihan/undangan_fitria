@@ -43,10 +43,12 @@ const totalTentatif = computed(() => {
   return wishes.value.filter(w => w.status === 'Tentatif').length
 })
 
+// Menghitung akumulasi total tamu riil (pax bawaan) yang akan datang
 const totalGuests = computed(() => {
   return wishes.value.reduce((acc, wish) => {
-    if (wish.status === 'Hadir' && wish.guestCount) {
-      return acc + wish.guestCount
+    if (wish.status === 'Hadir') {
+      // Jika guestCount tidak ada (data lama), default ke 1 pax
+      return acc + (wish.guestCount !== undefined ? wish.guestCount : 1)
     }
     return acc
   }, 0)
@@ -72,9 +74,9 @@ const resetWishes = () => {
       <div class="stat-card total-pax">
         <span class="stat-icon">👥</span>
         <div class="stat-info">
-          <h3>Total Sajian (Pax)</h3>
-          <p class="stat-number">{{ totalGuests }}</p>
-          <span class="stat-desc">Estimasi porsi makanan</span>
+          <h3>Total Estimasi Tamu Riil (Pax)</h3>
+          <p class="stat-number">{{ totalGuests }} Orang</p>
+          <span class="stat-desc">Akumulasi jumlah rombongan yang diajak</span>
         </div>
       </div>
 

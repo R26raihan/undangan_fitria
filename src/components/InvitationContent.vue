@@ -13,6 +13,9 @@ import bgKiri from '../assets/Biru Emas dan Merah Muda Halus Undangan Pernikahan
 import bgKanan from '../assets/Biru Emas dan Merah Muda Halus Undangan Pernikahan (2).png'
 import bgTiga from '../assets/Biru Emas dan Merah Muda Halus Undangan Pernikahan (3).png'
 import bgEmpat from '../assets/Biru Emas dan Merah Muda Halus Undangan Pernikahan (4).png'
+import bgPepohonanBackdrop from '../assets/bacground pepohonan.png'
+import frameKiriBawah from '../assets/framekiribawah.png'
+import frameKananAtas from '../assets/framekananatas.png'
 
 const contentGatesOpen = ref(false)
 
@@ -175,6 +178,10 @@ onUnmounted(() => {
 
     <!-- Fixed background decoration frame -->
     <div class="fixed-decorations">
+      <!-- Background pepohonan backdrop behind left & right trees -->
+      <img :src="bgPepohonanBackdrop" class="fixed-tree-backdrop left-tree-backdrop" alt="" />
+      <img :src="bgPepohonanBackdrop" class="fixed-tree-backdrop right-tree-backdrop" alt="" />
+      
       <img :src="bgKiriTree" class="fixed-tree left-tree" alt="" />
       <img :src="bgKananTree" class="fixed-tree right-tree" alt="" />
       <img :src="bungakiri" class="fixed-flower top-left" alt="" />
@@ -249,33 +256,40 @@ onUnmounted(() => {
 
     <!-- Mempelai Section -->
     <section class="section mempelai-section">
-      <div class="section-header" style="margin-bottom: 2rem; position: relative; z-index: 2;">
-        <h2 class="section-title">Mempelai</h2>
-        <p class="section-description">
-          Maha Suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan. Ya Allah, perkenankanlah kami menikahkan putra-putri kami:
-        </p>
-      </div>
+      <!-- Mempelai Wrapper inside quran-card style for consistency (now wrapping text as well) -->
+      <div class="quran-card" style="width: 100%; max-width: 380px; box-sizing: border-box; padding: 2.2rem 1.4rem; position: relative; overflow: hidden;">
+        <!-- Custom corner frame images -->
+        <img :src="frameKiriBawah" class="card-corner-decor bottom-left" alt="" />
+        <img :src="frameKananAtas" class="card-corner-decor top-right" alt="" />
 
-      <div class="mempelai-row">
-        <!-- Groom Card (Aswan) -->
-        <div class="mempelai-card">
-          <div class="mempelai-photo-container">
-            <img src="/src/assets/aswan.JPG" alt="Andi Aswan Hidayat" class="mempelai-img" />
-          </div>
-          <div class="mempelai-name-block">
-            <h3 class="mempelai-name">Andi Aswan Hidayat</h3>
-          </div>
+        <div class="section-header" style="margin-bottom: 2rem; position: relative; z-index: 2;">
+          <h2 class="section-title">Mempelai</h2>
+          <p class="section-description">
+            Maha Suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan. Ya Allah, perkenankanlah kami menikahkan putra-putri kami:
+          </p>
         </div>
 
-        <div class="mempelai-divider">&</div>
-
-        <!-- Bride Card (Fitri) -->
-        <div class="mempelai-card">
-          <div class="mempelai-photo-container">
-            <img src="/src/assets/fitri.JPG" alt="Fitriani" class="mempelai-img" />
+        <div class="mempelai-row">
+          <!-- Groom Card (Aswan) -->
+          <div class="mempelai-card">
+            <div class="mempelai-photo-container">
+              <img src="/src/assets/aswan.JPG" alt="Andi Aswan Hidayat" class="mempelai-img" />
+            </div>
+            <div class="mempelai-name-block">
+              <h3 class="mempelai-name">Andi Aswan Hidayat</h3>
+            </div>
           </div>
-          <div class="mempelai-name-block">
-            <h3 class="mempelai-name">Fitriani</h3>
+
+          <div class="mempelai-divider">&</div>
+
+          <!-- Bride Card (Fitri) -->
+          <div class="mempelai-card">
+            <div class="mempelai-photo-container">
+              <img src="/src/assets/fitri.JPG" alt="Fitriani" class="mempelai-img" />
+            </div>
+            <div class="mempelai-name-block">
+              <h3 class="mempelai-name">Fitriani</h3>
+            </div>
           </div>
         </div>
       </div>
@@ -519,6 +533,7 @@ onUnmounted(() => {
   bottom: -4%;
   width: 75%;
   height: auto;
+  z-index: 2; /* Di depan backdrop pepohonan */
 }
 
 .fixed-tree.left-tree {
@@ -527,6 +542,27 @@ onUnmounted(() => {
 
 .fixed-tree.right-tree {
   right: -18%;
+}
+
+/* Background pepohonan backdrop styling */
+.fixed-tree-backdrop {
+  position: absolute;
+  bottom: -2%;
+  width: 85%;
+  height: auto;
+  opacity: 0.45; /* Sedikit soft transparan di latar belakang */
+  filter: blur(2px); /* Blur halus untuk kedalaman dimensi */
+  z-index: 1; /* Di belakang fixed-tree */
+}
+
+.left-tree-backdrop {
+  left: -25%;
+  transform: rotate(-5deg);
+}
+
+.right-tree-backdrop {
+  right: -25%;
+  transform: scaleX(-1) rotate(-5deg); /* Mirror horizontal */
 }
 
 .fixed-flower {
@@ -971,9 +1007,10 @@ onUnmounted(() => {
 .mempelai-row {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  flex-wrap: nowrap; /* Jangan biarkan terlipat/wrap ke bawah */
+  align-items: flex-start; /* Sejajarkan rata atas agar foto sejajar sempurna */
   justify-content: center;
-  gap: 0.8rem;
+  gap: 0.5rem;
   width: 100%;
   position: relative;
   z-index: 2;
@@ -995,9 +1032,7 @@ onUnmounted(() => {
 /* Base states before animation triggers (active class on section) */
 .mempelai-section .section-header h2,
 .mempelai-section .section-header p,
-.mempelai-section .mempelai-card:first-child,
-.mempelai-section .mempelai-card:last-child,
-.mempelai-section .mempelai-divider {
+.mempelai-section .quran-card {
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 1s ease, transform 1s ease;
@@ -1016,37 +1051,12 @@ onUnmounted(() => {
   transition-delay: 0.3s;
 }
 
-/* Bride Card (Slides in from Left + Fade) */
-.mempelai-section .mempelai-card:first-child {
-  transform: translateX(-30px) translateY(10px);
-}
-.mempelai-section.active .mempelai-card:first-child {
+/* Mempelai Card Container */
+.mempelai-section.active .quran-card {
   opacity: 1;
-  transform: translateX(0) translateY(0);
+  transform: translateY(0);
   transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
   transition-delay: 0.5s;
-}
-
-/* Groom Card (Slides in from Right + Fade) */
-.mempelai-section .mempelai-card:last-child {
-  transform: translateX(30px) translateY(10px);
-}
-.mempelai-section.active .mempelai-card:last-child {
-  opacity: 1;
-  transform: translateX(0) translateY(0);
-  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-  transition-delay: 0.5s;
-}
-
-/* Divider Ampersand (&) Zoom/Fade in the middle */
-.mempelai-section .mempelai-divider {
-  transform: scale(0.5);
-  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.mempelai-section.active .mempelai-divider {
-  opacity: 1;
-  transform: scale(1);
-  transition-delay: 0.8s;
 }
 
 .mempelai-photo-container {
@@ -1084,13 +1094,32 @@ onUnmounted(() => {
 }
 
 .mempelai-name {
-  font-family: var(--font-serif);
-  font-size: 0.95rem;
+  font-family: 'Great Vibes', cursive; /* Menggunakan font 'Great Vibes' yang sama persis seperti cover */
+  font-size: clamp(1.8rem, 6vw, 2.5rem); /* Menggunakan clamp responsive */
   color: var(--color-primary);
-  font-weight: 700;
-  margin: 0;
-  line-height: 1.3;
+  font-weight: 400; /* Font weight diubah ke 400 untuk tampilan yang anggun */
+  margin: 0.2rem 0 0;
+  line-height: 1.2;
   text-align: center;
+}
+
+/* Custom corner frame styling inside quran-card */
+.card-corner-decor {
+  position: absolute;
+  width: 130px; /* Ukuran diperbesar dari 85px agar lebih dominan membingkai kartu */
+  height: auto;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.card-corner-decor.bottom-left {
+  bottom: 0;
+  left: 0;
+}
+
+.card-corner-decor.top-right {
+  top: 0;
+  right: 0;
 }
 
 .mempelai-divider {

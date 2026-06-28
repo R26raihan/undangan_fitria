@@ -77,7 +77,7 @@ Di hari yang penuh rasa syukur ini, kami ingin membagikan kabar bahagia. Atas iz
 Tanpa mengurangi rasa hormat, kami sangat berharap *${inputGuestName.value || '[Nama Tamu]'}* beserta keluarga berkenan hadir untuk memberikan doa restu secara langsung di hari bahagia kami.
 
 Detail acara dan lokasi dapat dilihat melalui tautan undangan digital di bawah ini:
-💌 ${generatedUrl.value || '[Link Undangan]'}
+ ${generatedUrl.value || '[Link Undangan]'}
 
 Kehadiran dan doa tulus dari Anda merupakan kado terindah bagi kami. Terima kasih banyak atas perhatian dan doa baiknya.
 

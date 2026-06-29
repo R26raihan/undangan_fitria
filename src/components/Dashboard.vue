@@ -710,10 +710,13 @@ const shareToWhatsApp = () => {
 
 /* Badges */
 .status-badge {
+  display: inline-block;
+  white-space: nowrap;
   font-size: 0.75rem;
-  padding: 0.25rem 0.65rem;
+  padding: 0.35rem 0.8rem;
   border-radius: 20px;
   font-weight: 600;
+  text-align: center;
 }
 
 .status-badge.hadir {

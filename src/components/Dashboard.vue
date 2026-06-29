@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { db } from '../service/firebase'
-import { collection, onSnapshot, query, orderBy, getDocs, writeBatch } from 'firebase/firestore'
+import { collection, onSnapshot, query, orderBy, getDocs, writeBatch, addDoc, deleteDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore'
 
 interface Wish {
   name: string
@@ -11,12 +11,26 @@ interface Wish {
   date: string
 }
 
+interface Guest {
+  id: string
+  name: string
+  phone: string
+  status: string // 'Belum Dikirim' | 'Sudah Dikirim'
+}
+
 const wishes = ref<Wish[]>([])
 let unsubscribeWishes: (() => void) | null = null
 
+const guests = ref<Guest[]>([])
+let unsubscribeGuests: (() => void) | null = null
+
+// Form inputs for Guest List
+const newGuestName = ref('')
+const newGuestPhone = ref('')
+
 onMounted(() => {
-  const q = query(collection(db, 'wishes'), orderBy('createdAt', 'desc'))
-  unsubscribeWishes = onSnapshot(q, (snapshot) => {
+  const wishesQ = query(collection(db, 'wishes'), orderBy('createdAt', 'desc'))
+  unsubscribeWishes = onSnapshot(wishesQ, (snapshot) => {
     const list: Wish[] = []
     snapshot.forEach((docSnap) => {
       const data = docSnap.data()
@@ -43,10 +57,29 @@ onMounted(() => {
   }, (error) => {
     console.error("Error fetching wishes for dashboard:", error)
   })
+
+  // Subscribing to Guests collection
+  const guestsQ = query(collection(db, 'guests'), orderBy('createdAt', 'desc'))
+  unsubscribeGuests = onSnapshot(guestsQ, (snapshot) => {
+    const list: Guest[] = []
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data()
+      list.push({
+        id: docSnap.id,
+        name: data.name || '',
+        phone: data.phone || '',
+        status: data.status || 'Belum Dikirim'
+      })
+    })
+    guests.value = list
+  }, (error) => {
+    console.error("Error fetching guests:", error)
+  })
 })
 
 onUnmounted(() => {
   if (unsubscribeWishes) unsubscribeWishes()
+  if (unsubscribeGuests) unsubscribeGuests()
 })
 
 // Calculations
@@ -65,7 +98,7 @@ const totalTentatif = computed(() => {
 })
 
 // Menghitung akumulasi total tamu riil (pax bawaan) yang akan datang
-const totalGuests = computed(() => {
+const totalGuestsCount = computed(() => {
   return wishes.value.reduce((acc, wish) => {
     if (wish.status === 'Hadir') {
       // Jika guestCount tidak ada (data lama), default ke 1 pax
@@ -161,7 +194,98 @@ const shareToWhatsApp = () => {
     : `https://api.whatsapp.com/send?text=${encodedText}`
     
   window.open(waUrl, '_blank')
-}</script>
+}
+
+// --- GUEST LIST FUNCTIONS ---
+const addGuest = async () => {
+  if (!newGuestName.value.trim()) {
+    alert('Harap masukkan nama tamu.')
+    return
+  }
+  try {
+    const newGuest = {
+      name: newGuestName.value.trim(),
+      phone: newGuestPhone.value.trim(),
+      status: 'Belum Dikirim',
+      createdAt: serverTimestamp()
+    }
+    await addDoc(collection(db, 'guests'), newGuest)
+    newGuestName.value = ''
+    newGuestPhone.value = ''
+  } catch (error) {
+    console.error('Error adding guest:', error)
+    alert('Gagal menambahkan tamu ke database.')
+  }
+}
+
+const deleteGuest = async (id: string) => {
+  if (confirm('Apakah Anda yakin ingin menghapus tamu ini?')) {
+    try {
+      await deleteDoc(doc(db, 'guests', id))
+    } catch (error) {
+      console.error('Error deleting guest:', error)
+      alert('Gagal menghapus tamu.')
+    }
+  }
+}
+
+const getGuestUrl = (name: string) => {
+  const origin = window.location.origin + window.location.pathname
+  return `${origin}?${encodeURIComponent(name.trim())}`
+}
+
+const copyGuestLink = async (name: string) => {
+  const url = getGuestUrl(name)
+  try {
+    await navigator.clipboard.writeText(url)
+    alert('Link undangan tamu berhasil disalin!')
+  } catch (err) {
+    alert('Gagal menyalin link.')
+  }
+}
+
+const sendWaAndMarkSent = async (guest: Guest) => {
+  const guestUrl = getGuestUrl(guest.name)
+  const message = `Assalamu'alaikum Wr. Wb.
+
+Halo *${guest.name}*, semoga Anda dan keluarga selalu dalam keadaan sehat dan berbahagia.
+
+Di hari yang penuh rasa syukur ini, kami ingin membagikan kabar bahagia. Atas izin Allah SWT, kami bermaksud untuk melangsungkan pernikahan kami, **Fitria & Aswan**.
+
+Tanpa mengurangi rasa hormat, kami sangat berharap *${guest.name}* beserta keluarga berkenan hadir untuk memberikan doa restu secara langsung di hari bahagia kami.
+
+Detail acara dan lokasi dapat dilihat melalui tautan undangan digital di bawah ini:
+ ${guestUrl}
+
+Kehadiran dan doa tulus dari Anda merupakan kado terindah bagi kami. Terima kasih banyak atas perhatian dan doa baiknya.
+
+Wassalamu'alaikum Wr. Wb.
+
+— *Fitria & Aswan*`
+
+  let phone = guest.phone.replace(/[^0-9]/g, '')
+  if (phone.startsWith('0')) {
+    phone = '62' + phone.slice(1)
+  }
+
+  const encodedText = encodeURIComponent(message)
+  const waUrl = phone 
+    ? `https://api.whatsapp.com/send?phone=${phone}&text=${encodedText}` 
+    : `https://api.whatsapp.com/send?text=${encodedText}`
+    
+  window.open(waUrl, '_blank')
+
+  if (guest.status !== 'Sudah Dikirim') {
+    try {
+      await updateDoc(doc(db, 'guests', guest.id), {
+        status: 'Sudah Dikirim'
+      })
+    } catch (error) {
+      console.error('Error updating status:', error)
+    }
+  }
+}
+</script>
 
 <template>
   <div class="dashboard-container">
@@ -176,7 +300,7 @@ const shareToWhatsApp = () => {
         <span class="stat-icon">👥</span>
         <div class="stat-info">
           <h3>Total Estimasi Tamu Riil (Pax)</h3>
-          <p class="stat-number">{{ totalGuests }} Orang</p>
+          <p class="stat-number">{{ totalGuestsCount }} Orang</p>
           <span class="stat-desc">Akumulasi jumlah rombongan yang diajak</span>
         </div>
       </div>
@@ -260,6 +384,78 @@ const shareToWhatsApp = () => {
             <span class="wa-icon">💬</span> Kirim / Bagikan ke WhatsApp
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- Guest List Management Section -->
+    <div class="generator-section">
+      <h2>Daftar Penerima Undangan (Tamu)</h2>
+      <p class="generator-desc">Kelola nama-nama tamu undangan Anda di sini. Anda bisa membagikan link secara langsung dan memantau status pengiriman.</p>
+      
+      <div class="generator-form" style="margin-bottom: 2rem;">
+        <div class="input-row">
+          <div class="input-group">
+            <label>Nama Tamu</label>
+            <input 
+              type="text" 
+              v-model="newGuestName" 
+              placeholder="Contoh: Bapak Budi & Istri" 
+              class="generator-input"
+            />
+          </div>
+          <div class="input-group">
+            <label>Nomor WhatsApp (Opsional)</label>
+            <input 
+              type="text" 
+              v-model="newGuestPhone" 
+              placeholder="Contoh: 08123456789" 
+              class="generator-input"
+            />
+          </div>
+        </div>
+        <button @click="addGuest" class="btn-generate">Tambah Tamu</button>
+      </div>
+
+      <!-- Guest Table List -->
+      <div v-if="guests.length === 0" class="empty-state" style="padding: 1.5rem;">
+        <p>Belum ada daftar tamu undangan.</p>
+      </div>
+
+      <div v-else class="table-wrapper">
+        <table class="dashboard-table">
+          <thead>
+            <tr>
+              <th>Nama Tamu</th>
+              <th>No. WhatsApp</th>
+              <th>Status Kirim</th>
+              <th style="text-align: right;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="guest in guests" :key="guest.id">
+              <td class="name-col">{{ guest.name }}</td>
+              <td>{{ guest.phone || '-' }}</td>
+              <td>
+                <span class="status-badge" :class="guest.status === 'Sudah Dikirim' ? 'hadir' : 'tentatif'">
+                  {{ guest.status }}
+                </span>
+              </td>
+              <td style="text-align: right;">
+                <div style="display: flex; gap: 0.5rem; justify-content: flex-end; flex-wrap: wrap;">
+                  <button @click="copyGuestLink(guest.name)" class="btn-copy" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;">
+                    Salin Link
+                  </button>
+                  <button @click="sendWaAndMarkSent(guest)" class="btn-whatsapp" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; font-weight: 600;">
+                    💬 Kirim WA
+                  </button>
+                  <button @click="deleteGuest(guest.id)" class="btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.75rem; border-radius: 6px;">
+                    Hapus
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
 

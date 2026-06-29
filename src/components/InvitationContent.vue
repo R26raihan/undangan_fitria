@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import { db } from '../service/firebase'
+import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore'
 import bungakiri from '../assets/bungakiri.png'
 import bungakanan from '../assets/bungakanan.png'
 import bgKiriTree from '../assets/pohonsisikiri.png'
@@ -40,6 +42,7 @@ const calculateTimeLeft = () => {
 
 // Wishes/RSVP logic
 interface Wish {
+  id: string
   name: string
   status: string
   guestCount?: number // Jumlah tamu yang diajak
@@ -47,55 +50,41 @@ interface Wish {
   date: string
 }
 
-const wishes = ref<Wish[]>([
-  {
-    name: 'Budi & Keluarga',
-    status: 'Hadir',
-    guestCount: 4,
-    message: 'Selamat menempuh hidup baru Fitria dan Aswan! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah. Amin.',
-    date: '2 jam yang lalu'
-  },
-  {
-    name: 'Siti Aminah',
-    status: 'Hadir',
-    guestCount: 1,
-    message: 'Happy wedding! Lancar-lancar sampai hari H yaa!',
-    date: '5 jam yang lalu'
-  }
-])
+const wishes = ref<Wish[]>([])
 
 const newName = ref('')
 const newStatus = ref('Hadir')
 const newGuestCount = ref(1) // Default 1 pax
 const newMessage = ref('')
+const isSuccessOpen = ref(false)
 
-const loadWishes = () => {
-  const stored = localStorage.getItem('wedding_wishes')
-  if (stored) {
-    wishes.value = JSON.parse(stored)
-  } else {
-    localStorage.setItem('wedding_wishes', JSON.stringify(wishes.value))
-  }
-}
+let unsubscribeWishes: (() => void) | null = null
 
-const submitWish = () => {
+const submitWish = async () => {
   if (!newName.value || !newMessage.value) return
   
-  const newWish: Wish = {
-    name: newName.value,
-    status: newStatus.value,
-    guestCount: newStatus.value === 'Hadir' ? newGuestCount.value : 0, // Hanya hitung pax jika hadir
-    message: newMessage.value,
-    date: 'Baru saja'
+  try {
+    const newWish = {
+      name: newName.value,
+      status: newStatus.value,
+      guestCount: newStatus.value === 'Hadir' ? newGuestCount.value : 0, // Hanya hitung pax jika hadir
+      message: newMessage.value,
+      createdAt: serverTimestamp()
+    }
+    
+    await addDoc(collection(db, 'wishes'), newWish)
+    
+    // Reset form
+    newName.value = ''
+    newMessage.value = ''
+    newGuestCount.value = 1
+    
+    // Show success dialog
+    isSuccessOpen.value = true
+  } catch (error) {
+    console.error('Error submitting wish:', error)
+    alert('Gagal mengirim ucapan. Silakan coba lagi.')
   }
-  
-  wishes.value.unshift(newWish)
-  localStorage.setItem('wedding_wishes', JSON.stringify(wishes.value))
-  
-  // Reset form
-  newName.value = ''
-  newMessage.value = ''
-  newGuestCount.value = 1
 }
 
 // Copy to Clipboard feature
@@ -114,7 +103,37 @@ let sectionObserver: IntersectionObserver | null = null
 onMounted(() => {
   calculateTimeLeft()
   timerInterval = setInterval(calculateTimeLeft, 1000)
-  loadWishes()
+
+  // Subscribing to Firestore collection in real-time
+  const q = query(collection(db, 'wishes'), orderBy('createdAt', 'desc'))
+  unsubscribeWishes = onSnapshot(q, (snapshot) => {
+    const list: Wish[] = []
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data()
+      let formattedDate = 'Baru saja'
+      if (data.createdAt) {
+        const dateObj = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt)
+        formattedDate = dateObj.toLocaleDateString('id-ID', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      }
+      list.push({
+        id: docSnap.id,
+        name: data.name || '',
+        status: data.status || 'Hadir',
+        guestCount: data.guestCount,
+        message: data.message || '',
+        date: formattedDate
+      })
+    })
+    wishes.value = list
+  }, (error) => {
+    console.error("Error listening to wishes:", error)
+  })
 
   // Trigger gate opening transition
   setTimeout(() => {
@@ -155,8 +174,8 @@ onMounted(() => {
 onUnmounted(() => {
   if (timerInterval) clearInterval(timerInterval)
   if (sectionObserver) sectionObserver.disconnect()
-})
-</script>
+  if (unsubscribeWishes) unsubscribeWishes()
+})</script>
 
 <template>
   <div class="invitation-container">
@@ -345,7 +364,7 @@ onUnmounted(() => {
             width="100%" 
             height="260" 
             style="border:0;" 
-            allowfullscreen="" 
+            :allowfullscreen="true" 
             loading="lazy" 
             referrerpolicy="strict-origin-when-cross-origin">
           </iframe>
@@ -469,8 +488,8 @@ onUnmounted(() => {
       </div>
 
       <!-- Wishes List -->
-      <div class="wishes-list">
-        <div v-for="(wish, idx) in wishes" :key="idx" class="wish-item">
+      <TransitionGroup name="wish" tag="div" class="wishes-list">
+        <div v-for="wish in wishes" :key="wish.id" class="wish-item">
           <div class="wish-header">
             <span class="wish-name">
               {{ wish.name }} 
@@ -485,7 +504,7 @@ onUnmounted(() => {
           <p class="wish-message">{{ wish.message }}</p>
           <span class="wish-date">{{ wish.date }}</span>
         </div>
-      </div>
+      </TransitionGroup>
     </section>
 
     <!-- Footer -->
@@ -494,6 +513,30 @@ onUnmounted(() => {
       <h2 class="footer-names">Fitria & Aswan</h2>
       <p class="copyright">© 2026 Fitria & Aswan. All Rights Reserved.</p>
     </footer>
+
+    <!-- Success Modal -->
+    <Transition name="fade">
+      <div v-if="isSuccessOpen" class="modal-overlay" @click.self="isSuccessOpen = false">
+        <div class="greeting-frame popup-card">
+          <!-- Inner Border & Ornaments -->
+          <div class="greeting-inner-border">
+            <div class="corner-ornament top-left"></div>
+            <div class="corner-ornament top-right"></div>
+            <div class="corner-ornament bottom-left"></div>
+            <div class="corner-ornament bottom-right"></div>
+          </div>
+
+          <div class="popup-content">
+            <span class="popup-icon">✨</span>
+            <h3 class="popup-title">Terima Kasih</h3>
+            <p class="popup-message">
+              Ucapan, doa restu, dan konfirmasi kehadiran Anda telah berhasil dikirimkan.
+            </p>
+            <button @click="isSuccessOpen = false" class="popup-close-btn">Tutup</button>
+          </div>
+        </div>
+      </div>
+    </Transition>
 
   </div>
 </template>
@@ -1790,5 +1833,109 @@ onUnmounted(() => {
 
 .content-floral-gates .right-side-decor {
   right: 0;
+}
+
+/* Modal Overlay & Popup Dialog Styling */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 30, 36, 0.7);
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.popup-card {
+  max-width: 350px;
+  animation: modalScaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  padding: 3.5rem 1.8rem;
+}
+
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.popup-icon {
+  font-size: 3rem;
+  filter: drop-shadow(0 2px 8px rgba(229, 193, 88, 0.4));
+}
+
+.popup-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: 2.5rem;
+  color: #dfba6b;
+  margin: 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.popup-message {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #ffffff;
+  margin: 0;
+  text-align: center;
+}
+
+.popup-close-btn {
+  background: linear-gradient(135deg, #dfba6b 0%, #b8913b 100%);
+  color: #1e3640;
+  border: none;
+  padding: 0.7rem 2.2rem;
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(184, 145, 59, 0.3);
+  transition: all 0.3s;
+  font-family: 'Montserrat', sans-serif;
+  margin-top: 0.5rem;
+}
+
+.popup-close-btn:hover {
+  background: linear-gradient(135deg, #f7e5a9 0%, #dfba6b 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(184, 145, 59, 0.4);
+}
+
+@keyframes modalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Wishes List TransitionGroup Animations */
+.wish-enter-active,
+.wish-leave-active {
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.wish-enter-from {
+  opacity: 0;
+  transform: translateY(30px) scale(0.95);
+}
+.wish-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
+}
+/* Ensure reordering elements animate smoothly */
+.wish-move {
+  transition: transform 0.5s ease;
 }
 </style>

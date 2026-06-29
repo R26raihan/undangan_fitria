@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { db } from '../service/firebase'
+import { collection, onSnapshot, query, orderBy, getDocs, writeBatch } from 'firebase/firestore'
 
 interface Wish {
   name: string
@@ -10,22 +12,41 @@ interface Wish {
 }
 
 const wishes = ref<Wish[]>([])
-
-const loadWishes = () => {
-  const stored = localStorage.getItem('wedding_wishes')
-  if (stored) {
-    wishes.value = JSON.parse(stored)
-  }
-}
+let unsubscribeWishes: (() => void) | null = null
 
 onMounted(() => {
-  loadWishes()
-  // Listen for storage changes in case they submit on another tab
-  window.addEventListener('storage', (e) => {
-    if (e.key === 'wedding_wishes') {
-      loadWishes()
-    }
+  const q = query(collection(db, 'wishes'), orderBy('createdAt', 'desc'))
+  unsubscribeWishes = onSnapshot(q, (snapshot) => {
+    const list: Wish[] = []
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data()
+      let formattedDate = 'Baru saja'
+      if (data.createdAt) {
+        const dateObj = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt)
+        formattedDate = dateObj.toLocaleDateString('id-ID', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      }
+      list.push({
+        name: data.name || '',
+        status: data.status || 'Hadir',
+        guestCount: data.guestCount,
+        message: data.message || '',
+        date: formattedDate
+      })
+    })
+    wishes.value = list
+  }, (error) => {
+    console.error("Error fetching wishes for dashboard:", error)
   })
+})
+
+onUnmounted(() => {
+  if (unsubscribeWishes) unsubscribeWishes()
 })
 
 // Calculations
@@ -54,10 +75,20 @@ const totalGuests = computed(() => {
   }, 0)
 })
 
-const resetWishes = () => {
-  if (confirm('Apakah Anda yakin ingin mereset semua data ucapan dan RSVP?')) {
-    localStorage.removeItem('wedding_wishes')
-    wishes.value = []
+const resetWishes = async () => {
+  if (confirm('Apakah Anda yakin ingin mereset semua data ucapan dan RSVP di database?')) {
+    try {
+      const q = query(collection(db, 'wishes'))
+      const querySnapshot = await getDocs(q)
+      const batch = writeBatch(db)
+      querySnapshot.forEach((docSnap) => {
+        batch.delete(docSnap.ref)
+      })
+      await batch.commit()
+    } catch (error) {
+      console.error('Error resetting wishes:', error)
+      alert('Gagal mereset data ucapan.')
+    }
   }
 }
 
@@ -130,8 +161,7 @@ const shareToWhatsApp = () => {
     : `https://api.whatsapp.com/send?text=${encodedText}`
     
   window.open(waUrl, '_blank')
-}
-</script>
+}</script>
 
 <template>
   <div class="dashboard-container">
